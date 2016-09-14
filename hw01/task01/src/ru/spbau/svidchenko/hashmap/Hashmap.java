@@ -162,7 +162,7 @@ class List {
     
     private Node findShadow (String key) {
         Node pos = head;
-        while (pos != null && pos.key != key) {
+        while (pos != null && !(pos.key.equals(key))) {
             pos = pos.next;
         }
         return pos;
