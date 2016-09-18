@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ru.spbau.svidchenko.hw02.task01.HashmapTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2016-09-17T21:43:47" hostname="HomeUnderCloud" time="0.01">
+  <properties/>
+  <testcase name="remove" classname="ru.spbau.svidchenko.hw02.task01.HashmapTest" time="0.002"/>
+  <testcase name="contains" classname="ru.spbau.svidchenko.hw02.task01.HashmapTest" time="0.0"/>
+  <testcase name="get" classname="ru.spbau.svidchenko.hw02.task01.HashmapTest" time="0.001"/>
+  <testcase name="put" classname="ru.spbau.svidchenko.hw02.task01.HashmapTest" time="0.0"/>
+  <testcase name="size" classname="ru.spbau.svidchenko.hw02.task01.HashmapTest" time="0.0"/>
+  <testcase name="clear" classname="ru.spbau.svidchenko.hw02.task01.HashmapTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
