@@ -1,5 +1,6 @@
 package ru.spbau.svidchenko.hw02.task01;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -8,43 +9,50 @@ import static org.junit.Assert.*;
  * Tests for List
  */
 public class ListTest {
+    private final List list;
+    @Before
+    public void Constructor_CallListConstructr_ListBuilded {
+        list = new List();
+        if (list == null) {
+            fail("List constructor failure");
+        }
+    }
+
     @Test
-    public void pushbackAndFind() throws Exception {
+    public void Find_FindExistingElement_ElementFound() throws Exception {
         List list = new List();
         for (int i = 0; i < 1000; i++) {
             list.pushback(Integer.toString(i), Integer.toString(i));
         }
         for (int i = 0; i < 1000; i++) {
             if (list.find(Integer.toString(i)) == null) {
-                throw new Exception("Something wrong with List::pushback or List::find");
+                fail("List::pushback or List::find failure");
             }
         }
     }
 
     @Test
-    public void findAndRemove() throws Exception {
+    public void FindAndRemove_RemoveExistingElement_ElementRemoved() throws Exception {
         List list = new List();
         for (int i = 0; i < 1000; i++) {
             list.pushback(Integer.toString(i), Integer.toString(i));
         }
         for (int i = 0; i < 1000; i++) {
             if (list.findAndRemove(Integer.toString(i)) == null) {
-                throw new Exception("Something wrong with List::pushback or List::findAndRemove");
+                fail("List::pushback or List::findAndRemove");
             }
         }
     }
 
     @Test
-    public void findAndReplace() throws Exception {
+    public void FindAndReplace_ReplaceOrCreateElement_NowElementExist() throws Exception {
         List list = new List();
         for (int i = 0; i < 1000; i++) {
-            if (list.findAndReplace(Integer.toString(i), Integer.toString(i)) != null) {
-                throw new Exception("Something wrong with List::findAndReplace or List::findAndRemove");
-            }
+            list.findAndReplace(Integer.toString(i), Integer.toString(i));
         }
         for (int i = 0; i < 1000; i++) {
             if (list.findAndRemove(Integer.toString(i)) == null) {
-                throw new Exception("Something wrong with List::findAndReplace or List::findAndRemove");
+                fail("List::findAndReplace or List::findAndRemove failure");
             }
         }
     }
