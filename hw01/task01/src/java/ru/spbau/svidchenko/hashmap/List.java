@@ -3,18 +3,16 @@ package ru.spbau.svidchenko.hw02.task01;
 /**
  *      Just simple two-way List
  *      File contains List class and inner Node class.
- *      (c) by Oleg Svidchenko
  */
 
 public class List {
     private Node head;
     private Node tail;
 
-    /**
-     * Simple constructor for empty List
-     */
+    /**Simple constructor for empty List*/
     public List() {
-        head = tail = null;
+        head = null;
+        tail = null;
     }
 
     /**
@@ -29,7 +27,8 @@ public class List {
             n.setPrevious(tail);
             tail = n;
         } else {
-            tail = head = n;
+            tail = n;
+            head = n;
         }
     }
 
@@ -105,9 +104,7 @@ public class List {
         return pos;
     }
 
-    /**
-     * Node of list
-     */
+    /**Node of list*/
     private class Node {
         private Node next;
         private Node prev;
@@ -122,54 +119,41 @@ public class List {
         public Node(String key, String value) {
             this.key = new String(key);
             this.value = new String(value);
-            next = prev = null;
+            next = null;
+            prev = null;
         }
 
-        /**
-         * @return next Node in List
-         */
+        /**Return next Node in List*/
         public Node getNext() {
             return next;
         }
 
-        /**
-         * @param next is new next Node in List
-         */
+        /**set new next Node in List*/
         public void setNext(Node next) {
             this.next = next;
         }
 
-        /**
-         * @return previous Node in List
-         */
+        /**Return previous Node in List*/
         public Node getPrevious() {
             return prev;
         }
 
-        /**
-         * @param prev is new previous Node in List
-         */
+        /**set new previous Node in List*/
         public void setPrevious(Node prev) {
             this.prev = prev;
         }
 
-        /**
-         * @return key of element
-         */
+        /**Return key of element*/
         public String getKey() {
             return key;
         }
 
-        /**
-         * @return value of element
-         */
+        /**Return value of element*/
         public String getValue() {
             return value;
         }
 
-        /**
-         * @param value is new value of element
-         */
+        /**set new value of element*/
         public void setValue(String value) {
             this.value = new String(value);
         }
