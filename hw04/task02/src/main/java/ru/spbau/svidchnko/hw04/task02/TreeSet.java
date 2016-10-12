@@ -1,15 +1,17 @@
 package ru.spbau.svidchnko.hw04.task02;
 
 /**
- * Created by ArgentumWalker on 12.10.16.
+ * Set based on binary tree. Don't implements any interface;
  */
 public class TreeSet<T extends Comparable<T>> {
     private TreeSetNode<T> root;
 
+    /** simple constructor of empty set*/
     public TreeSet() {
         root =  null;
     }
 
+    /** return size of set (number of contained elements*/
     public int size() {
         if (root == null) {
             return 0;
@@ -18,6 +20,10 @@ public class TreeSet<T extends Comparable<T>> {
         }
     }
 
+    /**
+     * Add element to set
+     * @return false if already contains such element and true otherwise
+     */
     public boolean add(T element) {
         if (root == null) {
             root = new TreeSetNode<T>(element, null);
@@ -51,6 +57,7 @@ public class TreeSet<T extends Comparable<T>> {
         return false;
     }
 
+    /** Return true if contains such element and false otherwise */
     public boolean contains(T element) {
         TreeSetNode<T> position = root;
         while (position != null && !position.getValue().equals(element)) {
