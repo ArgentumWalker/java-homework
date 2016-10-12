@@ -24,7 +24,7 @@ public class MaybeTest {
             tmp.get();
             fail();
         }
-        catch (MaybeNothingException) {
+        catch (MaybeNothingException e) {
             //Do nothing. It's OK;
         }
     }
@@ -48,7 +48,8 @@ public class MaybeTest {
     @Test
     public void MapTest_MapNothing_ReturnNothing() throws Exception {
         Maybe<Integer> tmp = Maybe.nothing();
-        if (tmp.map(MaybeTest::notNullMapper).isPresent()) {
+        //if (tmp.map(MaybeTest::notNullMapper).isPresent()) {
+        if (tmp.map(n -> n + 1.0).isPresent()) {
             fail();
         }
     }
@@ -56,7 +57,7 @@ public class MaybeTest {
     @Test
     public void MapTest_MapJustX_ReturnJustMapperX() throws Exception {
         Maybe<Integer> tmp = Maybe.just(42);
-        if (!tmp.map(MaybeTest::notNullMapper).isPresent()) {
+        if (!tmp.map(n -> n + 1.0).isPresent()) {
             fail();
         }
     }
@@ -64,7 +65,7 @@ public class MaybeTest {
     @Test
     public void MapTest_MapperReturnNull_ReturnNothing() throws Exception {
         Maybe<Integer> tmp = Maybe.just(42);
-        if (!tmp.map(MaybeTest::nullMapper).isPresent()) {
+        if (tmp.map(n -> null).isPresent()) {
             fail();
         }
     }

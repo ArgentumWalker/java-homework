@@ -44,7 +44,7 @@ public class Maybe<T> {
     }
 
     /** Apply mapper to contained value. If contains Nothing returns Nothing */
-    public <U> Maybe<U> map(Function<? super T, ? extends U> mapper) {
+    public <U> Maybe<U> map(Function<? super T, U> mapper) {
         if (content == null) {
             return Maybe.nothing();
         }
