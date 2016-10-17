@@ -1,6 +1,6 @@
 package ru.spbau.svidchenko.hashmap;
 
-import Java.lang.Math;
+import java.lang.Math;
 
 /**
  * Resizable hashmap with lists inside without any optimizations.
@@ -25,7 +25,7 @@ public class Hashmap {
     
     /**Return true if contains any element with such key*/
     public boolean contains(String key) {
-        return (elements[key.hashCode() % mod].find(key) != null);
+        return (elements[Math.abs(key.hashCode()) % mod].find(key) != null);
     }
     
     /**Return null if don't contains any element with such key or value of such element otherwise */ 
@@ -49,7 +49,7 @@ public class Hashmap {
     /**Return null if don't contains any element with such key or value of such element otherwise*/         
     public String remove(String key) {
         String result = elements[Math.abs(key.hashCode()) % mod].findAndRemove(key);
-        if (result == null) {
+        if (result != null) {
             count--;
         }
         return result;
@@ -62,7 +62,7 @@ public class Hashmap {
         elements = new List[INIT_SIZE];
         mod = INIT_SIZE;
         for (i = 0; i < elements.length; i++) {
-            elements[i] = new List ();
+            elements[i] = new List();
         }
     } 
     
@@ -79,5 +79,4 @@ public class Hashmap {
         }
     }
 }
-
 

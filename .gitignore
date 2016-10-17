@@ -22,3 +22,5 @@ hs_err_pid*
 *.idx
 *.MF
 *.js
+*/.gradle/
+.gradle/

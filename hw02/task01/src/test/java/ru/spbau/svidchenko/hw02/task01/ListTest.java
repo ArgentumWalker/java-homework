@@ -1,4 +1,4 @@
-package ru.spbau.svidchenko.hw02.task01;
+package ru.spbau.svidchenko.hashmap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,9 +9,9 @@ import static org.junit.Assert.*;
  * Tests for List
  */
 public class ListTest {
-    private final List list;
+    private List list;
     @Before
-    public void Constructor_CallListConstructr_ListBuilded {
+    public void Constructor_CallListConstructr_ListBuilded() {
         list = new List();
         if (list == null) {
             fail("List constructor failure");

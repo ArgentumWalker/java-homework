@@ -1,4 +1,4 @@
-package ru.spbau.svidchenko.hw02.task01;
+package ru.spbau.svidchenko.hashmap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,11 +8,11 @@ import static org.junit.Assert.*;
 /**
  * Some tests for Hashmap class
  */
-public class HashmapTests {
-    private final Hashmap map;
+public class HashmapTest {
+    private Hashmap map;
 
     @Before
-    public void Constructor_ConstructNewHashmap_HashmapBuilded throws Exception() {
+    public void Constructor_ConstructNewHashmap_HashmapBuilded() throws Exception {
         map = new Hashmap();
         if (map == null) {
             fail("Failed at Hashmap constructor test");
@@ -86,9 +86,10 @@ public class HashmapTests {
             map.put(Integer.toString(i), Integer.toString(i));
         }
         for (int i = 0; i < 101; i++) {
-            map.remove(Integer.toString(i));
+            System.out.println(map.remove(Integer.toString(i)));
         }
         if (map.size() != 0) {
+            System.out.println("Finaly: " + map.size());
             map.clear();
             fail("Fail at Hashmap remove test");
         }

@@ -1,4 +1,4 @@
-package ru.spbau.svidchenko.hw02.task01;
+package ru.spbau.svidchenko.hashmap;
 
 /**
  *      Just simple two-way List
@@ -8,12 +8,6 @@ package ru.spbau.svidchenko.hw02.task01;
 public class List {
     private Node head;
     private Node tail;
-
-    /**Simple constructor for empty List*/
-    public List() {
-        head = null;
-        tail = null;
-    }
 
     /**
      * Put element to the end of List
