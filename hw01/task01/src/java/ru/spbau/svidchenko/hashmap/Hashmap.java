@@ -61,8 +61,8 @@ public class Hashmap {
         count = 0; 
         elements = new List[INIT_SIZE];
         mod = INIT_SIZE;
-        for(i = 0; i < elements.length; i++) {
-            elements[i] = new List ();
+        for (i = 0; i < elements.length; i++) {
+            elements[i] = new List();
         }
     } 
     
