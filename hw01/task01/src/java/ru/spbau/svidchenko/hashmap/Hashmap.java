@@ -25,7 +25,7 @@ public class Hashmap {
     
     /**Return true if contains any element with such key*/
     public boolean contains(String key) {
-        return (elements[key.hashCode() % mod].find(key) != null);
+        return (elements[Math.abs(key.hashCode()) % mod].find(key) != null);
     }
     
     /**Return null if don't contains any element with such key or value of such element otherwise */ 
@@ -61,7 +61,7 @@ public class Hashmap {
         count = 0; 
         elements = new List[INIT_SIZE];
         mod = INIT_SIZE;
-        for (i = 0; i < elements.length; i++) {
+        for(i = 0; i < elements.length; i++) {
             elements[i] = new List ();
         }
     } 
