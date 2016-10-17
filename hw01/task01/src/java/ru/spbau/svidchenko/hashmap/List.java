@@ -9,12 +9,6 @@ public class List {
     private Node head;
     private Node tail;
 
-    /**Simple constructor for empty List*/
-    public List() {
-        head = null;
-        tail = null;
-    }
-
     /**
      * Put element to the end of List
      * @param key is key of element
