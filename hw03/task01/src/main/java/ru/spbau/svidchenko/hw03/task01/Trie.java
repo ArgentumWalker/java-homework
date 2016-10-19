@@ -28,10 +28,7 @@ public class Trie {
     /** return true if contains such string */
     public boolean contains(String s) {
         TrieNode position = findTrieNode(s);
-        if (position == null || !position.isEndOfString()) {
-            return false;
-        }
-        return true;
+        return !(position == null || !position.isEndOfString());
     }
 
     /**
