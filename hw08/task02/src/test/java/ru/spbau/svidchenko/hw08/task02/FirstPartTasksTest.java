@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 import static ru.spbau.svidchenko.hw08.task02.FirstPartTasks.*;
-import static sp.FirstPartTasks.*;
 
 public class FirstPartTasksTest {
 
@@ -101,7 +100,6 @@ public class FirstPartTasksTest {
         assertEquals(
                 0,
                 countAlbumDuplicates(Stream.of()));
-
         assertEquals(
                 3,
                 countAlbumDuplicates(Stream.of(ALBUM_0, ALBUM_1, ALBUM_2, ALBUM_3, ALBUM_4, ALBUM_5, ALBUM_6,
@@ -144,6 +142,7 @@ public class FirstPartTasksTest {
 
     @Test
     public void testJoinTo() {
+        System.out.println(joinTo("abc, cde"));
         assertEquals(
                 "<abc, cde>",
                 joinTo("abc", "cde"));
