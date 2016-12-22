@@ -5,6 +5,7 @@ package ru.spbau.svidchnko.hw04.task02;
  */
 public class TreeSet<T extends Comparable<T>> {
     private TreeSetNode<T> root;
+    private int size = 0;
 
     /** simple constructor of empty set*/
     public TreeSet() {
@@ -13,11 +14,7 @@ public class TreeSet<T extends Comparable<T>> {
 
     /** return size of set (number of contained elements*/
     public int size() {
-        if (root == null) {
-            return 0;
-        } else {
-            return root.getSize();
-        }
+        return size;
     }
 
     /**
@@ -27,6 +24,7 @@ public class TreeSet<T extends Comparable<T>> {
     public boolean add(T element) {
         if (root == null) {
             root = new TreeSetNode<T>(element, null);
+            size = 1;
             return true;
         }
         TreeSetNode<T> previousPosition = null;
@@ -41,17 +39,15 @@ public class TreeSet<T extends Comparable<T>> {
         }
         if (position == null) {
             position = new TreeSetNode<T>(element, previousPosition);
-            if (previousPosition != null) {
-                if (element.compareTo(previousPosition.getValue()) < 0) {
-                    previousPosition.setLeft(position);
-                } else {
-                    previousPosition.setRight(position);
-                }
+            if (element.compareTo(previousPosition.getValue()) < 0) { //Previous position can't be null
+                previousPosition.setLeft(position);
+            } else {
+                previousPosition.setRight(position);
             }
             while (position != null) {
-                position.refreshSize();
                 position = position.getParent();
             }
+            size++;
             return true;
         }
         return false;
@@ -67,29 +63,20 @@ public class TreeSet<T extends Comparable<T>> {
                 position = position.getRight();
             }
         }
-        if (position != null) {
-            return true;
-        }
-        return false;
+        return position != null;
     }
 
     private class TreeSetNode<T> {
         private TreeSetNode<T> parent;
         private TreeSetNode<T> left;
         private TreeSetNode<T> right;
-        private T content;
-        private int size;
+        private final T content;
 
         public TreeSetNode(T value, TreeSetNode<T> parent) {
             content = value;
             this.parent = parent;
             left = null;
             right = null;
-            size = 1;
-        }
-
-        public int getSize() {
-            return size;
         }
 
         public T getValue() {
@@ -116,14 +103,5 @@ public class TreeSet<T extends Comparable<T>> {
             this.right = right;
         }
 
-        public void refreshSize() {
-            size = 1;
-            if (left != null) {
-                size += left.getSize();
-            }
-            if (right != null) {
-                size += right.getSize();
-            }
-        }
     }
 }

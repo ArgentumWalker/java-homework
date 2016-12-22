@@ -5,9 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by ArgentumWalker on 12.10.16.
- */
+
 public class TreeSetTest {
     TreeSet<Integer> set;
 
@@ -21,7 +19,7 @@ public class TreeSetTest {
 
     @Test
     public void SizeTest_GettingSizeOfTree_CorrectAnswer() throws Exception {
-        assertTrue(Integer.toString(set.size()),set.size() == 20);
+        assertEquals(Integer.toString(set.size()),set.size(), 20);
     }
 
     @Test
