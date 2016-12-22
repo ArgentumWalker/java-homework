@@ -1,7 +1,7 @@
 package ru.spbau.svidchenko.hw04.task01;
 
 /**
- * Created by ArgentumWalker on 11.10.16.
+ * This exception means, that you trying to call Maybe::just from null pointer
  */
 public class MaybeJustNullException extends Exception {
 }

@@ -1,9 +1,6 @@
 package ru.spbau.svidchenko.hw04.task01;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -15,19 +12,12 @@ public class NumSquaresWriter {
     private ArrayList<Maybe<Double>> elements;
 
     /** Read numbers from stream until stream ends */
-    public NumSquaresWriter(InputStream in) {
+    public NumSquaresWriter(InputStream in) throws IOException {
         elements = new ArrayList<Maybe<Double>>();
         Maybe<Double> maybe;
         Scanner input = new Scanner(in);
-        while(input.hasNextLine()) {
-            String s = input.nextLine();
-            try {
-                Double num = Double.parseDouble(s);
-                num *= num;
-                maybe = Maybe.just(num);
-            } catch (Exception e) {
-                maybe = Maybe.nothing();
-            }
+        while (input.hasNextLine()) {
+            maybe = readMaybe(input);
             elements.add(maybe);
         }
     }
@@ -36,12 +26,7 @@ public class NumSquaresWriter {
     public void write(OutputStream out) throws IOException {
         DataOutputStream output = new DataOutputStream(out);
         for (Maybe<Double> maybe : elements) {
-            try {
-                output.writeChars(maybe.get().toString() + "\n");
-            }
-            catch (MaybeNothingException e) {
-                output.writeChars(STRING_IF_NOTHING + "\n");
-            }
+            writeMaybe(output, maybe);
         }
     }
 
@@ -50,22 +35,31 @@ public class NumSquaresWriter {
         Maybe<Double> maybe;
         Scanner input = new Scanner(in);
         DataOutputStream output = new DataOutputStream(out);
-        while(input.hasNextLine()) {
-            String s = input.nextLine();
-            try {
-                Double num = Double.parseDouble(s);
-                num *= num;
-                maybe = Maybe.just(num);
-            }
-            catch (Exception e) {
-                maybe = Maybe.nothing();
-            }
-            try {
-                output.writeChars(maybe.get().toString() + "\n");
-            }
-            catch (MaybeNothingException e) {
-                output.writeChars(STRING_IF_NOTHING + "\n");
-            }
+        while (input.hasNextLine()) {
+            maybe = readMaybe(input);
+            writeMaybe(output, maybe);
+        }
+    }
+
+    private static Maybe<Double> readMaybe(Scanner input) throws IOException {
+        Maybe<Double> maybe;
+        String s = input.nextLine();
+        try {
+            Double num = Double.parseDouble(s);
+            maybe = Maybe.just(num * num);
+        }
+        catch (NumberFormatException | MaybeJustNullException e) {
+            maybe = Maybe.nothing();
+        }
+        return maybe;
+    }
+
+    private static void writeMaybe(DataOutputStream output, Maybe maybe) throws IOException {
+        try {
+            output.writeChars(maybe.get().toString() + "\n");
+        }
+        catch (MaybeNothingException e) {
+            output.writeChars(STRING_IF_NOTHING + "\n");
         }
     }
 }

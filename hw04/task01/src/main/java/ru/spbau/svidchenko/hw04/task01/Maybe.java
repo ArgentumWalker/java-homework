@@ -6,7 +6,8 @@ import java.util.function.Function;
  * class that have two states: Nothing (null) and Just X (not null)
  */
 public class Maybe<T> {
-    T content;
+
+    private T content;
 
     private Maybe(T cont) {
         content = cont;
@@ -22,6 +23,7 @@ public class Maybe<T> {
         }
         return new Maybe<T>(value);
     }
+
     /** Make empty Maybe with nothing inside*/
     public static <T> Maybe<T> nothing() {
         return new Maybe<T>(null);
