@@ -11,11 +11,11 @@ import java.util.LinkedList;
 import static org.junit.Assert.*;
 
 public class CollectionsTest {
-    Collection<Integer> collect;
-    Function1<Integer, Integer> mapper;
-    Function2<Integer, Integer, Integer> fold;
-    Predicate<Integer> pred1;
-    Predicate<Integer> pred2;
+    private Collection<Integer> collect;
+    private Function1<Integer, Integer> mapper;
+    private Function2<Integer, Integer, Integer> fold;
+    private Predicate<Integer> pred1;
+    private Predicate<Integer> pred2;
 
     @Before
     public void collectionInit() {
@@ -44,12 +44,13 @@ public class CollectionsTest {
             }
         };
     }
+
     @Test
     public void MapTest_SuccAllValues() throws Exception {
         int i = 1;
         assertTrue(Collections.map(mapper, collect).size() == 10);
         for (Integer x : Collections.map(mapper, collect)) {
-            assertTrue(x == i);
+            assertEquals(x, (Integer)i);
             i++;
         }
     }
@@ -58,7 +59,7 @@ public class CollectionsTest {
     public void FilterTest_FilterByPred1_OnlyEvenNumbers() throws Exception {
         assertTrue(Collections.filter(pred1, collect).size() == 5);
         for (Integer x : Collections.filter(pred1, collect)) {
-            assertTrue(x % 2 == 0);
+            assertEquals(x % 2, 0);
         }
     }
 
@@ -72,7 +73,7 @@ public class CollectionsTest {
 
     @Test
     public void FoldrTest_WithFoldFunction_SumOfNumbers() throws Exception {
-        assertTrue(Collections.foldr(fold, 0, collect) == 45);
+        assertEquals(Collections.foldr(fold, 0, collect), (Integer)45);
     }
 
 

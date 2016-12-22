@@ -22,10 +22,10 @@ public class Function1Test {
     }
 
     @Test
-    public void ComposeTest_omeSimpleTests_CorrectAnswers() throws Exception {
-        assertTrue(f.compose(g).apply(0) == 4);
-        assertTrue(f.compose(g).apply(2) == 8);
-        assertTrue(g.compose(f).apply(2) == 6);
+    public void ComposeTest_oneSimpleTests_CorrectAnswers() throws Exception {
+        assertEquals(f.compose(g).apply(0), (Integer)4);
+        assertEquals(f.compose(g).apply(2), (Integer)8);
+        assertEquals(g.compose(f).apply(2), (Integer)6);
     }
 
 }
