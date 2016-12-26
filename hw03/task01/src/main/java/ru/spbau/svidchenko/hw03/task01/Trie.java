@@ -1,178 +1,134 @@
 package ru.spbau.svidchenko.hw03.task01;
 
+
 import java.io.*;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Realization of Trie
  */
 public class Trie {
-    private TrieNode headNode;
+    private HashMap<Character, Trie> child;
+    private boolean isEndOfString;
+    private int countOfStrings;
 
-    /** Generate empty trie*/
     public Trie() {
-        headNode = new TrieNode();
+        countOfStrings = 0;
+        isEndOfString = false;
+        child = new HashMap<Character, Trie>();
     }
 
-    /** Add string to Trie
-     * @return true if already contains such string
-     */
-    public boolean add(String s) {
-        TrieNode position = createTrieNode(s);
-        boolean result = position.isEndOfString();
-        position.setEndOfStringState(true);
-        refreshTrieSizes(position);
+    public static void serialize(DataOutputStream output, Trie trie) throws IOException {
+        int childCount = trie.child.entrySet().size();
+        output.writeBoolean(trie.isEndOfString);
+        output.writeInt(trie.countOfStrings);
+        output.writeInt(childCount);
+        for (Map.Entry<Character, Trie> entry : trie.child.entrySet()) {
+            output.writeChar(entry.getKey());
+            serialize(output, entry.getValue());
+        }
+    }
+
+    public static Trie deserialize(DataInputStream input) throws IOException {
+        Trie result = new Trie();
+        int childCount;
+        result.isEndOfString = input.readBoolean();
+        result.countOfStrings = input.readInt();
+        childCount = input.readInt();
+        for (int i = 0; i < childCount; i++) {
+            char key = input.readChar();
+            Trie value = deserialize(input);
+            result.child.put(key, value);
+        }
         return result;
     }
-    /** return true if contains such string */
-    public boolean contains(String s) {
-        TrieNode position = findTrieNode(s);
-        return !(position == null || !position.isEndOfString());
+
+    public boolean add(String s) {
+        return __add(s, 0);
     }
 
-    /**
-     * Remove string from Trie
-     * @return true if contains such string
-     */
-    public boolean remove(String s) {
-        TrieNode position = findTrieNode(s);
-        if (position == null) {
+    public boolean contains(String s) {
+        //System.out.println("Contains:");
+        Trie result = __find(s, 0);
+        if (result == null) {
+            //System.out.println("Null");
             return false;
         }
-        boolean result = position.isEndOfString();
-        position.setEndOfStringState(false);
-        refreshTrieSizes(position);
-        return result;
+        //System.out.println("NotNull");
+        return result.isEndOfString;
     }
-    /** return count of vertex in Trie */
+
+    public boolean remove(String s) {
+        return __remove(s, 0);
+    }
+
     public int size() {
-        return headNode.getTreeSize();
+        return countOfStrings;
     }
-    /** return count of strings in Trie */
-    public int count() {
-        return headNode.getStringsCount();
-    }
-    /** return count of strings with such prefix */
+
     public int howManyStartsWithPrefix(String s) {
-        TrieNode position = findTrieNode(s);
-        if (position == null) {
+        Trie result = __find(s, 0);
+        if (result == null) {
             return 0;
         }
-        return position.getStringsCount();
+        return result.countOfStrings;
     }
-    /** serialize Trie to Output Stream*/
-    public void serialize(OutputStream out) throws IOException{
-        DataOutputStream outStream = new DataOutputStream(out);
-        headNode.serialize(outStream);
-    }
-    /** deserealize Trie from InputStream */
-    public void deserialize(InputStream in) throws IOException{
-        headNode = new TrieNode(new DataInputStream(in));
-    }
+
     public void clear() {
-        headNode = new TrieNode();
+        child.clear();
+        isEndOfString = false;
+        countOfStrings = 0;
     }
 
-    private void refreshTrieSizes(TrieNode node) {
-        while (node.parent() != null) {
-            node.refreshSizes();
-            node = node.parent();
-        }
-    }
-
-    private TrieNode findTrieNode(String s) {
-        TrieNode position = headNode;
-        for (char c : s.toCharArray()) {
-            if (position.nextAt(c) == null) {
-                return null;
+    private boolean __add(String s, int pos) {
+        if (s.length() <= pos) {
+            if (!isEndOfString) {
+                isEndOfString = true;
+                countOfStrings++;
+                return true;
             }
-            position = position.nextAt(c);
+            return false;
         }
-        return position;
+        if (child.get(s.charAt(pos)) == null) {
+            Trie n = new Trie();
+            child.put(s.charAt(pos), n);
+        }
+        boolean b = child.get(s.charAt(pos)).__add(s, pos + 1);
+        if (b) {
+            countOfStrings++;
+        }
+        return b;
     }
 
-    private TrieNode createTrieNode(String s) {
-        TrieNode position = headNode;
-        for (char c : s.toCharArray()) {
-            if (position.nextAt(c) == null) {
-                position.addChild(c, new TrieNode());
-            }
-            position = position.nextAt(c);
+    private Trie __find(String s, int pos) {
+        if (s.length() <= pos) {
+            return this;
         }
-        return position;
+        if (child.get(s.charAt(pos)) == null) {
+            return null;
+        }
+        return child.get(s.charAt(pos)).__find(s, pos+1);
     }
 
-    private class TrieNode {
-        private TrieNode parent;
-        private int stringsCount = 0;
-        private int treeSize = 1;
-        private boolean isEndOfString;
-        private LinkedHashMap<Character, TrieNode> children;
-
-        public TrieNode() {
-            this(false, null);
-        }
-        public TrieNode(boolean endOfString, TrieNode parent) {
-            this.parent = parent;
-            isEndOfString = endOfString;
+    private boolean __remove(String s, int pos) {
+        if (s.length() <= pos) {
             if (isEndOfString) {
-                stringsCount = 1;
+                isEndOfString = false;
+                countOfStrings--;
+                return true;
             }
-            children = new LinkedHashMap<Character, TrieNode>();
+            return false;
         }
-        public TrieNode(DataInputStream in) throws IOException {
-            int charCount = in.readInt();
-            isEndOfString = in.readBoolean();
-            for (int i = 0; i < charCount; i++) {
-                char c = in.readChar();
-                children.put(c, new TrieNode(in));
-            }
-            refreshSizes();
+        if (child.get(s.charAt(pos)) == null) {
+            return false;
         }
-        public boolean isEndOfString() {
-            return isEndOfString;
+        boolean b = child.get(s.charAt(pos)).__remove(s, pos + 1);
+        if (child.get(s.charAt(pos)).countOfStrings == 0) {
+            child.remove(s.charAt(pos));
         }
-        public void setEndOfStringState(boolean eos) {
-            isEndOfString = eos;
+        if (b) {
+            countOfStrings--;
         }
-        public void addChild(Character character, TrieNode child) {
-            children.put(character, child);
-        }
-        public void refreshSizes() {
-            if (isEndOfString) {
-                stringsCount = 1;
-            } else {
-                stringsCount = 0;
-            }
-            treeSize = 1;
-            for (TrieNode node : children.values()) {
-                stringsCount += node.getStringsCount();
-                treeSize += node.getTreeSize();
-            }
-        }
-        public int getStringsCount() {
-            return stringsCount;
-        }
-        public int getTreeSize() {
-            return treeSize;
-        }
-        public TrieNode nextAt(char character) {
-            return children.get(character);
-        }
-        public TrieNode parent() {
-            return parent;
-        }
-        public void serialize(DataOutputStream out) throws IOException{
-            out.write(children.size());
-            out.writeChar('\n');
-            out.writeBoolean(isEndOfString);
-            out.writeChar('\n');
-            for (Character c : children.keySet()) {
-                out.writeChar(c);
-                out.writeChar('\n');
-                children.get(c).serialize(out);
-            }
-        }
+        return b;
     }
 }

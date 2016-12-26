@@ -6,6 +6,8 @@ import org.omg.CORBA.portable.OutputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 
 import static org.junit.Assert.*;
 
@@ -26,9 +28,7 @@ public class TrieTest {
         bor.add("String2");
         bor.add("42");
         bor.add("Str");
-        if (!bor.contains("42")) {
-            fail();
-        }
+        assertTrue(bor.contains("42"));
     }
 
     @Test
@@ -38,9 +38,7 @@ public class TrieTest {
         bor.add("String2");
         bor.add("42");
         bor.add("Str");
-        if (bor.contains("String")) {
-            fail();
-        }
+        assertFalse(bor.contains("String"));
     }
 
     @Test
@@ -50,9 +48,7 @@ public class TrieTest {
         bor.add("String2");
         bor.add("42");
         bor.add("Str");
-        if (!bor.remove("String1")) {
-            fail();
-        }
+        assertTrue(bor.remove("String1"));
     }
 
     @Test
@@ -62,34 +58,17 @@ public class TrieTest {
         bor.add("String2");
         bor.add("42");
         bor.add("Str");
-        if (bor.remove("String")) {
-            fail();
-        }
+        assertFalse(bor.remove("String"));
     }
 
     @Test
-    public void SizeTest_CountOfVertex_Return11() throws Exception {
+    public void SizeTest_CountOfVertex_Return4() throws Exception {
         bor.clear();
         bor.add("String1");
         bor.add("String2");
         bor.add("42");
         bor.add("Str");
-        if (bor.size() != 11) {
-            fail();
-        }
-    }
-
-    @Test
-    public void CountTest_CountOfStrings_Return4() throws Exception {
-        bor.clear();
-        bor.add("String1");
-        bor.add("String2");
-        bor.add("String2");
-        bor.add("42");
-        bor.add("Str");
-        if (bor.count() != 4) {
-            fail();
-        }
+        assertEquals(4, bor.size());
     }
 
     @Test
@@ -113,9 +92,11 @@ public class TrieTest {
         bor.add("42");
         bor.add("Str");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        bor.serialize(out);
+        DataOutputStream output = new DataOutputStream(out);
+        Trie.serialize(output, bor);
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-        bor.deserialize(in);
+        DataInputStream input = new DataInputStream(in);
+        System.out.println(out.toString());
+        Trie.deserialize(input);
     }
-
 }
