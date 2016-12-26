@@ -34,10 +34,9 @@ public class Trie {
     /** Deserialize Trie from DataInputStream */
     public static Trie deserialize(DataInputStream input) throws IOException {
         Trie result = new Trie();
-        int childCount;
         result.isEndOfString = input.readBoolean();
         result.countOfStrings = input.readInt();
-        childCount = input.readInt();
+        int childCount = input.readInt();
         for (int i = 0; i < childCount; i++) {
             char key = input.readChar();
             Trie value = deserialize(input);
@@ -59,13 +58,10 @@ public class Trie {
      * @return true if string in and false otherwise
      */
     public boolean contains(String s) {
-        //System.out.println("Contains:");
         Trie result = __find(s, 0);
         if (result == null) {
-            //System.out.println("Null");
             return false;
         }
-        //System.out.println("NotNull");
         return result.isEndOfString;
     }
 

@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
  */
 public class TrieTest {
     private Trie trie;
+
     @Before
     public void ConstructorTest_CallTrieConstructor_ConstructionComplete() {
         trie = new Trie();
@@ -78,9 +79,7 @@ public class TrieTest {
         trie.add("String2");
         trie.add("42");
         trie.add("Str");
-        if (trie.howManyStartsWithPrefix("Str") != 3) {
-            fail();
-        }
+        assertEquals(3, trie.howManyStartsWithPrefix("Str"));
     }
 
     @Test
@@ -97,5 +96,9 @@ public class TrieTest {
         DataInputStream input = new DataInputStream(in);
         System.out.println(out.toString());
         Trie.deserialize(input);
+        assertTrue(trie.contains("String1"));
+        assertTrue(trie.contains("String2"));
+        assertTrue(trie.contains("42"));
+        assertTrue(trie.contains("Str"));
     }
 }
