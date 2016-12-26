@@ -1,0 +1,68 @@
+package ru.spbau.svidchenko.functional;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.sql.rowset.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import static org.junit.Assert.*;
+
+public class CollectionsTest {
+    private Collection<Integer> collect;
+    private Function1<Integer, Integer> mapper;
+    private Function2<Integer, Integer, Integer> fold;
+    private Predicate<Integer> pred1;
+    private Predicate<Integer> pred2;
+
+    @Before
+    public void collectionInit() {
+        collect = new LinkedList<Integer>();
+        for (int i = 0; i < 10; i++) {
+            collect.add(i);
+        }
+        mapper = (x) -> x + 1;new Function1<Integer, Integer>() {
+            public Integer apply(Integer x) {
+                return x+1;
+            }
+        };
+        pred1 = (x) -> x % 2 == 0;
+        pred2 = (x) -> x < 5;
+        fold = (x, y) -> x + y;
+    }
+
+    @Test
+    public void MapTest_SuccAllValues() throws Exception {
+        int i = 1;
+        assertTrue(Collections.map(mapper, collect).size() == 10);
+        for (Integer x : Collections.map(mapper, collect)) {
+            assertEquals(x, (Integer)i);
+            i++;
+        }
+    }
+
+    @Test
+    public void FilterTest_FilterByPred1_OnlyEvenNumbers() throws Exception {
+        assertTrue(Collections.filter(pred1, collect).size() == 5);
+        for (Integer x : Collections.filter(pred1, collect)) {
+            assertEquals(x % 2, 0);
+        }
+    }
+
+    @Test
+    public void TakeWhileTest_Pred2_NumbersFrom0To4() throws Exception {
+        assertTrue(Collections.takeWhile(pred2, collect).size() == 5);
+        for (Integer x : Collections.takeWhile(pred2, collect)) {
+            assertTrue(x < 5);
+        }
+    }
+
+    @Test
+    public void FoldrTest_WithFoldFunction_SumOfNumbers() throws Exception {
+        assertEquals(Collections.foldr(fold, 0, collect), (Integer)45);
+    }
+
+
+}
