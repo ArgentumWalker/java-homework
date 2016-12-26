@@ -5,19 +5,21 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Realization of Trie
+ * Recursive realization of Trie
  */
 public class Trie {
     private HashMap<Character, Trie> child;
     private boolean isEndOfString;
     private int countOfStrings;
 
+    /** Simple constructor. Creates empty trie */
     public Trie() {
         countOfStrings = 0;
         isEndOfString = false;
         child = new HashMap<Character, Trie>();
     }
 
+    /** Static method, which serialize Trie to DataOutputStream */
     public static void serialize(DataOutputStream output, Trie trie) throws IOException {
         int childCount = trie.child.entrySet().size();
         output.writeBoolean(trie.isEndOfString);
@@ -29,6 +31,7 @@ public class Trie {
         }
     }
 
+    /** Deserialize Trie from DataInputStream */
     public static Trie deserialize(DataInputStream input) throws IOException {
         Trie result = new Trie();
         int childCount;
@@ -43,10 +46,18 @@ public class Trie {
         return result;
     }
 
+    /**
+     * Add string to Trie
+     * @return false if sting already in and true otherwise
+     */
     public boolean add(String s) {
         return __add(s, 0);
     }
 
+    /**
+     * Check if trie contains such string
+     * @return true if string in and false otherwise
+     */
     public boolean contains(String s) {
         //System.out.println("Contains:");
         Trie result = __find(s, 0);
@@ -58,14 +69,20 @@ public class Trie {
         return result.isEndOfString;
     }
 
+    /**
+     * Remove string from trie
+     * @return false if there are no such string and true otherwise
+     */
     public boolean remove(String s) {
         return __remove(s, 0);
     }
 
+    /** String count in trie */
     public int size() {
         return countOfStrings;
     }
 
+    /** String count in trie with such prefix */
     public int howManyStartsWithPrefix(String s) {
         Trie result = __find(s, 0);
         if (result == null) {
@@ -74,6 +91,7 @@ public class Trie {
         return result.countOfStrings;
     }
 
+    /** Make Trie empty */
     public void clear() {
         child.clear();
         isEndOfString = false;
