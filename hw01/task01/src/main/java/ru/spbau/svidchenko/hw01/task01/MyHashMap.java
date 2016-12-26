@@ -80,7 +80,7 @@ public class MyHashMap {
 
     private void resize() {
         List[] oldElements = elements;
-        List[] elements = new List[2*oldElements.length + 1];
+        elements = new List[2 * oldElements.length + 1];
         for (int i = 0; i < elements.length; i++) {
             elements[i] = new List();
         }

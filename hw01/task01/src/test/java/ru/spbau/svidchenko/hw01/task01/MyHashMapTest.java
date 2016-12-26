@@ -30,9 +30,7 @@ public class MyHashMapTest {
         map.put("F", "A");
         map.put("G", "A");
         map.put("H", "A");
-        if (map.size() != 8) {
-            fail();
-        }
+        assertEquals(8, map.size());
     }
 
     @Test
@@ -54,21 +52,14 @@ public class MyHashMapTest {
         map.put("F", "A");
         map.put("G", "A");
         map.put("H", "A");
-        if (map.size() != 8) {
-            fail();
-        }
+        assertEquals(8, map.size());
     }
 
     @Test
     public void PutReturn_PutSomeStrings_ValuesEquals() {
         MyHashMap map = new MyHashMap();
-        if (map.put("A", "A") != null) {
-            fail();
-        }
-        String s = map.put("A", "B");
-        if (s == null || !s.equals("A")) {
-            fail();
-        }
+        assertEquals(map.put("A", "A"), null);
+        assertEquals(map.put("A", "B"), "A");
     }
 
     @Test
@@ -77,21 +68,11 @@ public class MyHashMapTest {
         map.put("A", "A");
         map.put("B", "A");
         map.put("A", "B");
-        if (map.remove("D") != null) {
-            fail();
-        }
-        if (!map.remove("A").equals("B")) {
-            fail();
-        }
-        if (!map.remove("B").equals("A")) {
-            fail();
-        }
-        if (map.remove("A") != null) {
-            fail();
-        }
-        if (map.size() != 0) {
-            fail();
-        }
+        assertEquals(null, map.remove("D"));
+        assertEquals("A", map.remove("B"));
+        assertEquals("B", map.remove("A"));
+        assertEquals(null, map.remove("A"));
+        assertEquals(0, map.size());
     }
 
     @Test
@@ -100,16 +81,9 @@ public class MyHashMapTest {
         map.put("A", "A");
         map.put("B", "A");
         map.put("A", "B");
-        if (map.get("D") != null) {
-            fail();
-        }
-        if (!map.get("A").equals("B")) {
-            System.out.println(map.get("A"));
-            fail();
-        }
-        if (!map.get("B").equals("A")) {
-            fail();
-        }
+        assertEquals(null, map.get("D"));
+        assertEquals("B", map.get("A"));
+        assertEquals("A", map.get("B"));
     }
 
 }
