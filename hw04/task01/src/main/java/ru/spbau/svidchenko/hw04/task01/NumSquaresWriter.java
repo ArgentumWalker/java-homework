@@ -13,7 +13,7 @@ public class NumSquaresWriter {
 
     /** Read numbers from stream until stream ends */
     public NumSquaresWriter(InputStream in) throws IOException {
-        elements = new ArrayList<Maybe<Double>>();
+        elements = new ArrayList<>();
         Maybe<Double> maybe;
         Scanner input = new Scanner(in);
         while (input.hasNextLine()) {
