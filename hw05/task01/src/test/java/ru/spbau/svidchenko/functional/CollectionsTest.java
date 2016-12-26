@@ -23,26 +23,14 @@ public class CollectionsTest {
         for (int i = 0; i < 10; i++) {
             collect.add(i);
         }
-        mapper = new Function1<Integer, Integer>() {
+        mapper = (x) -> x + 1;new Function1<Integer, Integer>() {
             public Integer apply(Integer x) {
                 return x+1;
             }
         };
-        pred1 = new Predicate<Integer>() {
-            public Boolean apply(Integer x) {
-                return x % 2 == 0;
-            }
-        };
-        pred2 = new Predicate<Integer>() {
-            public Boolean apply(Integer x) {
-                return x < 5;
-            }
-        };
-        fold = new Function2<Integer, Integer, Integer>() {
-            public Integer apply(Integer x, Integer y) {
-                return x + y;
-            }
-        };
+        pred1 = (x) -> x % 2 == 0;
+        pred2 = (x) -> x < 5;
+        fold = (x, y) -> x + y;
     }
 
     @Test

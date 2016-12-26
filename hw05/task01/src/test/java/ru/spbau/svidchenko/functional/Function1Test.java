@@ -6,19 +6,13 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class Function1Test {
-    Function1<Integer, Integer> f, g;
+    private Function1<Integer, Integer> f;
+    private Function1<Integer, Integer> g;
+
     @Before
     public void defineFunctions() {
-        f = new Function1<Integer, Integer>() {
-            public Integer apply(Integer x) {
-                return x + 2;
-            }
-        };
-        g = new Function1<Integer, Integer>() {
-            public Integer apply(Integer x) {
-                return x * 2;
-            }
-        };
+        f = (x) -> x + 2;
+        g = (x) -> x * 2;
     }
 
     @Test

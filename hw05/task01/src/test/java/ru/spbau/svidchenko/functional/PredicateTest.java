@@ -6,21 +6,13 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class PredicateTest {
-    Predicate<Integer> div2;
-    Predicate<Integer> div3;
+    private Predicate<Integer> div2;
+    private Predicate<Integer> div3;
 
     @Before
     public void predicateInit() {
-        div2 = new Predicate<Integer>() {
-            public Boolean apply(Integer x) {
-                return x % 2 == 0;
-            }
-        };
-        div3 = new Predicate<Integer>() {
-            public Boolean apply(Integer x) {
-                return x % 3 == 0;
-            }
-        };
+        div2 = (x) -> x % 2 == 0;
+        div3 = (x) -> x % 3 == 0;
     }
 
     @Test

@@ -11,16 +11,8 @@ public class Function2Test {
 
     @Before
     public void initFunctions() {
-        multF = new Function2<Integer, Integer, Integer>() {
-            public Integer apply(Integer x, Integer y) {
-                return x * y;
-            }
-        };
-        succF = new Function1<Integer, Integer>() {
-            public Integer apply(Integer x) {
-                return x + 1;
-            }
-        };
+        multF = (x, y) -> x * y;
+        succF = (x) -> x + 1;
     }
 
     @Test
