@@ -14,9 +14,7 @@ public class MyHashMapTest {
     @Before
     public void Constructor_CreateHashmap_NoFails() throws Exception {
         MyHashMap map = new MyHashMap();
-        if (map.size() != 0) {
-            fail();
-        }
+        assertEquals(0, map.size());
     }
 
     @Test
