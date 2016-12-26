@@ -68,16 +68,14 @@ public class ThreadPoolmpl<E> {
             boolean interrupted = false;
             while (!interrupted) {
                 synchronized (tasks) {
-                    if (!tasks.isEmpty()) {
-                        task = tasks.removeFirst();
-                    } else {
-                        try {
+                    try {
+                        while (tasks.isEmpty()) {
                             tasks.wait();
-                            task = tasks.removeFirst();
                         }
-                        catch (Exception e) {
-                            interrupted = true;
-                        }
+                        task = tasks.removeFirst();
+                    }
+                    catch (Exception e) {
+                        interrupted = true;
                     }
                 }
                 if (!interrupted) {
@@ -147,7 +145,7 @@ public class ThreadPoolmpl<E> {
          */
         public T get() throws InterruptedException, LightExecutionException {
             synchronized (waitersNotifyer) {
-                if (!isReady) {
+                while (!isReady) {
                     waitersNotifyer.wait();
                 }
             }
