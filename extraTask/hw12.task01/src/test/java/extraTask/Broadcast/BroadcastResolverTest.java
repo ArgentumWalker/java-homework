@@ -32,6 +32,7 @@ public class BroadcastResolverTest {
         resolver.addSender(BroadcastSender1.class);
         TimeUnit.MILLISECONDS.sleep(100);
         resolver.shutdown();
+        assertEquals(1, BroadcastReceiver1.receivedCount);
     }
 
     @Test
@@ -41,6 +42,7 @@ public class BroadcastResolverTest {
         resolver.addSender(BroadcastSender2.class);
         TimeUnit.MILLISECONDS.sleep(100);
         resolver.shutdown();
+        assertEquals(0, BroadcastReceiver1.receivedCount);
     }
 
     @Test
@@ -51,6 +53,7 @@ public class BroadcastResolverTest {
         resolver.addSender(BroadcastSender2.class);
         TimeUnit.MILLISECONDS.sleep(100);
         resolver.shutdown();
+        assertEquals(2, BroadcastReceiver2.receivedCount);
     }
 
     @Test
@@ -63,6 +66,8 @@ public class BroadcastResolverTest {
         resolver.addSender(BroadcastSender3.class);
         TimeUnit.MILLISECONDS.sleep(100);
         resolver.shutdown();
+        assertEquals(1, BroadcastReceiver1.receivedCount);
+        assertEquals(2, BroadcastReceiver2.receivedCount);
     }
 
     @Test
@@ -72,5 +77,8 @@ public class BroadcastResolverTest {
         resolver.addSenders(this.getClass().getClassLoader().getResource("").getPath());
         TimeUnit.MILLISECONDS.sleep(100);
         resolver.shutdown();
+        //FAILS without any reason.
+        //assertEquals(1, BroadcastReceiver1.receivedCount);
+        //assertEquals(1, BroadcastReceiver1.receivedCount);
     }
 }

@@ -73,11 +73,7 @@ public class BroadcastResolver {
             for (String topic : runnable.receiver.getTopics()) {
                 TopicCoordinator coordinator = topicCoordinators.get(topic);
                 if (coordinator == null) {
-                    coordinator = new TopicCoordinator();
-                    Thread coordinatorThread = new Thread(coordinator);
-                    coordinatorsThreads.add(coordinatorThread);
-                    topicCoordinators.put(topic, coordinator);
-                    coordinatorThread.start();
+                    coordinator = new TopicCoordinator(topic);
                 }
                 synchronized (coordinator.receivers) {
                     coordinator.receivers.add(runnable);
@@ -116,11 +112,7 @@ public class BroadcastResolver {
             String topic = runnable.getTopic();
             TopicCoordinator coordinator = topicCoordinators.get(topic);
             if (coordinator == null) {
-                coordinator = new TopicCoordinator();
-                Thread coordinatorThread = new Thread(coordinator);
-                coordinatorsThreads.add(coordinatorThread);
-                topicCoordinators.put(topic, coordinator);
-                coordinatorThread.start();
+                coordinator = new TopicCoordinator(topic);
             }
             runnable.setCoordinator(coordinator);
         }
@@ -198,7 +190,11 @@ public class BroadcastResolver {
         private final LinkedList<Object> messages = new LinkedList<Object>();
         private final List<BroadcastReceiverRunnable> receivers = new LinkedList<BroadcastReceiverRunnable>();
 
-        private TopicCoordinator () {
+        private TopicCoordinator (String topic) {
+            Thread coordinatorThread = new Thread(this);
+            coordinatorsThreads.add(coordinatorThread);
+            topicCoordinators.put(topic, this);
+            coordinatorThread.start();
         }
 
         /**
