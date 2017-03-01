@@ -5,6 +5,8 @@ package ru.spbau.svidchenko.hw01;
  */
 public interface Lazy<T> {
 
+    Object NULL = new Object();
+
     /**
      * Should return the result of calculation
      */

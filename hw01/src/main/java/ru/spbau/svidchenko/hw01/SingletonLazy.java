@@ -14,10 +14,17 @@ public class SingletonLazy<T> implements Lazy<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T get() {
         synchronized (sup) {
             if (result == null) {
                 result = sup.get();
+                if (result == null) {
+                    result = (T)NULL;
+                }
+            }
+            if (result == NULL) {
+                return null;
             }
             return result;
         }

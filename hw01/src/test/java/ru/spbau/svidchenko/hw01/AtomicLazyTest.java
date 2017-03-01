@@ -42,4 +42,32 @@ public class AtomicLazyTest {
             assertTrue(a == b);
         }
     }
+
+    @Test
+    public void get_MuchThreadsAndNull_ResultsAreNulls() {
+        Lazy<Integer> lazy = LazyFactory.getAtomicLazy(() -> null);
+        ArrayList<Thread> threads = new ArrayList<>();
+        ArrayList<Integer> result = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            threads.add(new Thread(() -> {
+                synchronized (result) {
+                    result.add(lazy.get());
+                }
+            }));
+        }
+        for (Thread t : threads) {
+            t.start();
+        }
+        for (Thread t : threads) {
+            try {
+                t.join();
+            }
+            catch (InterruptedException e) {
+                //Nope
+            }
+        }
+        for (Integer a : result) {
+            assertTrue(a == null);
+        }
+    }
 }

@@ -15,10 +15,18 @@ class AtomicLazy<T> implements Lazy<T> {
         result = new AtomicReference<T>(null);
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public T get() {
         if (result.get() == null) {
             T res = sup.get();
+            if (res == null) {
+                res = (T)NULL;
+            }
             result.compareAndSet(null, res);
+        }
+        if (result.get() == NULL) {
+            return null;
         }
         return result.get();
     }
