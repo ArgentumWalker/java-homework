@@ -1,33 +1,33 @@
 package ru.spbau.svidchenko.hw01;
 
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.Supplier;
 
 /**
  * Fast thread-safe implementation, but supplier can be called not once
  */
 class AtomicLazy<T> implements Lazy<T> {
-    private Supplier<T> sup;
-    private AtomicReference<T> result;
+    private Supplier<T> supplier;
+    private volatile Object result;
+    private static final AtomicReferenceFieldUpdater<AtomicLazy, Object> resultUpdater =
+            AtomicReferenceFieldUpdater.newUpdater(AtomicLazy.class, Object.class, "result");
 
     AtomicLazy(Supplier<T> supplier) {
-        sup = supplier;
-        result = new AtomicReference<T>(null);
+        this.supplier = supplier;
+        result = NULL;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public T get() {
-        if (result.get() == null) {
-            T res = sup.get();
-            if (res == null) {
-                res = (T)NULL;
+        if (result == NULL) {
+            Supplier<T> tmp = supplier;
+            if (tmp != null) {
+                resultUpdater.compareAndSet(this, (T) NULL, tmp.get());
+                supplier = null;
             }
-            result.compareAndSet(null, res);
         }
-        if (result.get() == NULL) {
-            return null;
-        }
-        return result.get();
+        return (T)result;
     }
 }

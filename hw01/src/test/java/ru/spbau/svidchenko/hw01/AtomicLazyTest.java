@@ -17,28 +17,10 @@ public class AtomicLazyTest {
     @Test
     public void get_MuchThreads_ResultsAreEquals() {
         Lazy<Integer> lazy = LazyFactory.getAtomicLazy(() -> new Integer(10000));
-        ArrayList<Thread> threads = new ArrayList<>();
-        ArrayList<Integer> result = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            threads.add(new Thread(() -> {
-                synchronized (result) {
-                    result.add(lazy.get());
-                }
-            }));
-        }
-        for (Thread t : threads) {
-            t.start();
-        }
-        for (Thread t : threads) {
-            try {
-                t.join();
-            }
-            catch (InterruptedException e) {
-                //Nope
-            }
-        }
-        Integer b = result.get(0);
-        for (Integer a : result) {
+        ArrayList<Object> result;
+        result = LazyFactoryTest.startWithManyThreads(lazy);
+        Object b = result.get(0);
+        for (Object a : result) {
             assertTrue(a == b);
         }
     }
@@ -46,27 +28,9 @@ public class AtomicLazyTest {
     @Test
     public void get_MuchThreadsAndNull_ResultsAreNulls() {
         Lazy<Integer> lazy = LazyFactory.getAtomicLazy(() -> null);
-        ArrayList<Thread> threads = new ArrayList<>();
-        ArrayList<Integer> result = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            threads.add(new Thread(() -> {
-                synchronized (result) {
-                    result.add(lazy.get());
-                }
-            }));
-        }
-        for (Thread t : threads) {
-            t.start();
-        }
-        for (Thread t : threads) {
-            try {
-                t.join();
-            }
-            catch (InterruptedException e) {
-                //Nope
-            }
-        }
-        for (Integer a : result) {
+        ArrayList<Object> result;
+        result = LazyFactoryTest.startWithManyThreads(lazy);
+        for (Object a : result) {
             assertTrue(a == null);
         }
     }

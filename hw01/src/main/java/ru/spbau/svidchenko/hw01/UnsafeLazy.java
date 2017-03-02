@@ -6,25 +6,19 @@ import java.util.function.Supplier;
  * Unsafe Lazy realization
  */
 class UnsafeLazy<T> implements Lazy<T> {
-    private Supplier<T> sup;
+    private Supplier<T> supplier;
     private T result;
 
     UnsafeLazy(Supplier<T> supplier) {
-        sup = supplier;
-        result = null;
+        this.supplier = supplier;
+        result = (T)NULL;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public T get() {
-        if (result == null) {
-            result = sup.get();
-            if (result == null) {
-                result = (T)NULL;
-            }
-        }
         if (result == NULL) {
-            return null;
+            result = supplier.get();
         }
         return result;
     }

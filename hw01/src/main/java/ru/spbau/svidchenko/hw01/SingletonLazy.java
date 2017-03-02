@@ -6,25 +6,19 @@ import java.util.function.Supplier;
  * Slow thread-safe Lazy realization with once-called supplier guaranty
  */
 public class SingletonLazy<T> implements Lazy<T> {
-    private Supplier<T> sup;
-    private T result = null;
+    private Supplier<T> supplier;
+    private T result = (T)NULL;
 
     SingletonLazy(Supplier<T> supplier) {
-        sup = supplier;
+        this.supplier = supplier;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public T get() {
-        synchronized (sup) {
-            if (result == null) {
-                result = sup.get();
-                if (result == null) {
-                    result = (T)NULL;
-                }
-            }
+        synchronized (this) {
             if (result == NULL) {
-                return null;
+                result = supplier.get();
             }
             return result;
         }
