@@ -6,4 +6,6 @@ jdk:
 env:
   - PROJECT_DIR=hw01
 
-before_install: cd $PROJECT_DIR
+script: 
+  - cd $PROJECT_DIR
+  - gradle assemble
