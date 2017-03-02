@@ -7,7 +7,7 @@ import java.util.function.Supplier;
  */
 public class SingletonLazy<T> implements Lazy<T> {
     private Supplier<T> supplier;
-    private T result = (T)NULL;
+    private volatile T result = (T)NULL;
 
     SingletonLazy(Supplier<T> supplier) {
         this.supplier = supplier;
@@ -16,11 +16,14 @@ public class SingletonLazy<T> implements Lazy<T> {
     @Override
     @SuppressWarnings("unchecked")
     public T get() {
-        synchronized (this) {
-            if (result == NULL) {
-                result = supplier.get();
+        if (result == NULL) {
+            synchronized (this) {
+                if (result == NULL) {
+                    result = supplier.get();
+                    supplier = null;
+                }
             }
-            return result;
         }
+        return result;
     }
 }

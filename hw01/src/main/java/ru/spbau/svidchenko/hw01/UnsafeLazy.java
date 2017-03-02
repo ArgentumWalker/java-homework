@@ -17,8 +17,10 @@ class UnsafeLazy<T> implements Lazy<T> {
     @Override
     @SuppressWarnings("unchecked")
     public T get() {
-        if (result == NULL) {
+        Supplier<T> supplier = this.supplier;
+        if (supplier != null && result == NULL) {
             result = supplier.get();
+            this.supplier = null;
         }
         return result;
     }
