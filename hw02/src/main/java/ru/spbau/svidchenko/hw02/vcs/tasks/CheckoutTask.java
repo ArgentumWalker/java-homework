@@ -3,8 +3,11 @@ package ru.spbau.svidchenko.hw02.vcs.tasks;
 import ru.spbau.svidchenko.hw02.vcs.VCSDataController;
 import ru.spbau.svidchenko.hw02.vcs.data.CommitData;
 import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
+import ru.spbau.svidchenko.hw02.vcs.exceptions.BranchNotExistException;
+import ru.spbau.svidchenko.hw02.vcs.exceptions.CommitNotExistException;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.WrongArgumentsException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -20,7 +23,7 @@ public class CheckoutTask implements VCSTask {
      *             second is name of branch or index of commit
      * @param dataController - any implementation of VCSDataController
      */
-    public CheckoutTask(String[] args, VCSDataController dataController) throws WrongArgumentsException, IOException {
+    public CheckoutTask(String[] args, VCSDataController dataController) throws WrongArgumentsException, IOException, BranchNotExistException {
         this.dataController = dataController;
         
         if (args.length != 2) {
@@ -29,6 +32,9 @@ public class CheckoutTask implements VCSTask {
         reviewID = -1;
         if (args[0].toLowerCase().equals("-b")) {
             Integer id = dataController.findBranchByName(args[1]);
+            if (id == null) {
+                throw new BranchNotExistException();
+            }
             reviewID = dataController.getBranchData(id).getLastCommit();
         }
         if (args[0].toLowerCase().equals("-c")) {
@@ -40,10 +46,16 @@ public class CheckoutTask implements VCSTask {
     }
 
     @Override
-    public void execute() throws IOException {
+    public void execute() throws IOException, CommitNotExistException {
         RepositoryInfo info = dataController.getRepositoryInfo();
         CommitData currentCommit = dataController.getCommitData(info.getCurrentCommitIndex());
-        CommitData newCommit = dataController.getCommitData(reviewID);
+        CommitData newCommit;
+        try {
+            newCommit = dataController.getCommitData(reviewID);
+        }
+        catch (FileNotFoundException e) {
+            throw new CommitNotExistException();
+        }
         for (Integer fileDataID : currentCommit.getTrackedFiles()) {
             dataController.clearFile(fileDataID);
         }

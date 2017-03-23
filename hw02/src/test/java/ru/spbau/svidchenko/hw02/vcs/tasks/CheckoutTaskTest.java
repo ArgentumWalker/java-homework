@@ -7,6 +7,7 @@ import org.junit.rules.TemporaryFolder;
 import ru.spbau.svidchenko.hw02.vcs.VCSFilesystemDataController;
 import ru.spbau.svidchenko.hw02.vcs.data.CommitData;
 import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
+import ru.spbau.svidchenko.hw02.vcs.exceptions.BranchNotExistException;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.NotRepositoryException;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.WrongArgumentsException;
 
@@ -29,7 +30,7 @@ public class CheckoutTaskTest {
     private VCSFilesystemDataController dataController;
 
     @Before
-    public void createFiles() throws IOException, NotRepositoryException, WrongArgumentsException {
+    public void createFiles() throws IOException, NotRepositoryException, WrongArgumentsException, BranchNotExistException {
         file1 = fldr.newFile();
         file2 = fldr.newFile();
         folder1 = fldr.newFolder();

@@ -5,6 +5,7 @@ import ru.spbau.svidchenko.hw02.vcs.data.BranchData;
 import ru.spbau.svidchenko.hw02.vcs.data.CommitData;
 import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
 import ru.spbau.svidchenko.hw02.vcs.data.TrackedFileData;
+import ru.spbau.svidchenko.hw02.vcs.exceptions.BranchNotExistException;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.WrongArgumentsException;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class BranchTask implements VCSTask {
     }
 
     @Override
-    public void execute() throws IOException {
+    public void execute() throws IOException, BranchNotExistException {
         switch (task) {
             case CREATE_TASK: {
                 createTask();
@@ -62,9 +63,12 @@ public class BranchTask implements VCSTask {
         }
     }
 
-    private void removeTask() throws IOException {
+    private void removeTask() throws IOException, BranchNotExistException {
         RepositoryInfo info = dataController.getRepositoryInfo();
         Integer branchIndex = dataController.findBranchByName(targetBranch);
+        if (branchIndex == null) {
+            throw new BranchNotExistException();
+        }
         if (dataController.getCommitData(info.getCurrentCommitIndex()).getBranch() == branchIndex) {
             //TODO throw exception
         }

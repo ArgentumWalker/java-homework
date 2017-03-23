@@ -5,6 +5,7 @@ import ru.spbau.svidchenko.hw02.vcs.data.BranchData;
 import ru.spbau.svidchenko.hw02.vcs.data.CommitData;
 import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
 import ru.spbau.svidchenko.hw02.vcs.data.TrackedFileData;
+import ru.spbau.svidchenko.hw02.vcs.exceptions.BranchNotExistException;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.WrongArgumentsException;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class MergeTask implements VCSTask {
      * @param args - only one element, contains name of donor branch
      * @param dataController - any implementation of VCSDataController
      */
-    public MergeTask(String[] args, VCSDataController dataController) throws IOException, WrongArgumentsException {
+    public MergeTask(String[] args, VCSDataController dataController) throws IOException, WrongArgumentsException, BranchNotExistException {
         if (args.length != 1) {
             throw new WrongArgumentsException();
         }
@@ -32,6 +33,9 @@ public class MergeTask implements VCSTask {
         targetBranch = dataController.getCommitData(
                 dataController.getRepositoryInfo().getCurrentCommitIndex())
                 .getBranch();
+        if (donorBranch == null) {
+            throw new BranchNotExistException();
+        }
     }
 
     @Override
@@ -56,8 +60,10 @@ public class MergeTask implements VCSTask {
             for (int i = 0; i < targetCommitFiles.size(); i++) {
                 TrackedFileData checker = targetCommitFiles.get(i);
                 if (checker.getPath().equals(data.getPath())) {
-                    if (checker.getLastModifyDate().compareTo(data.getLastModifyDate()) > 0) {
+                    if (checker.getLastModifyDate().compareTo(data.getLastModifyDate()) < 0) {
                         targetCommitFiles.set(i, data);
+                        indexes.set(i, data.getIndex());
+                        dataController.restoreFile(data.getIndex());
                     }
                     changed = true;
                 }

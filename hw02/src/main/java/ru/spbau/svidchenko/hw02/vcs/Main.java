@@ -3,8 +3,7 @@ package ru.spbau.svidchenko.hw02.vcs;
 import ru.spbau.svidchenko.hw02.vcs.data.BranchData;
 import ru.spbau.svidchenko.hw02.vcs.data.CommitData;
 import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
-import ru.spbau.svidchenko.hw02.vcs.exceptions.NotRepositoryException;
-import ru.spbau.svidchenko.hw02.vcs.exceptions.WrongArgumentsException;
+import ru.spbau.svidchenko.hw02.vcs.exceptions.*;
 import ru.spbau.svidchenko.hw02.vcs.tasks.*;
 
 import java.io.IOException;
@@ -92,6 +91,12 @@ public class Main {
             System.out.println("FATAL: Repository files are crashed");
         } catch (NotRepositoryException e) {
             System.out.println("This directory do not belongs to any repository");
+        } catch (BranchNotExistException e) {
+            System.out.println("Branch not exist. Try 'branch' command to know branch names");
+        } catch (CommitNotExistException e) {
+            System.out.println("Commit not exist. Try 'log' command to know branch names");
+        } catch (VCSException e) {
+            System.out.println("Something wrong. Try to check typed arguments and try again");
         }
     }
 }
