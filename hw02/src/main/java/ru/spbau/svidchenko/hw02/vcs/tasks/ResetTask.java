@@ -37,7 +37,7 @@ public class ResetTask implements VCSTask {
                         return null;
                     }
                 })
-                .filter((tfd) -> tfd.getPath().startsWith(path + "\\"))
+                .filter((tfd) -> tfd.getPath().startsWith(path + dataController.sep()))
                 .collect(Collectors.toList());
         for (TrackedFileData data : filesToReset) {
             dataController.clearFile(data.getIndex());

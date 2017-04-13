@@ -25,12 +25,13 @@ import java.util.stream.Stream;
  * Works with standard filesystem
  */
 public class VCSFilesystemDataController implements VCSDataController {
+    private static final String SEP = File.separator;
     private static final String VCS_DATA_DIRECTORY = ".VCS";
-    private static final String VCS_COMMIT_DATA_DIRECTORY  = VCS_DATA_DIRECTORY + "\\" + "COMMITS";
-    private static final String VCS_BRANCH_DATA_DIRECTORY  = VCS_DATA_DIRECTORY + "\\" + "BRANCHES";
-    private static final String VCS_FILE_DATA_DIRECTORY    = VCS_DATA_DIRECTORY + "\\" + "FILE_DATAS";
-    private static final String VCS_FILE_CONTENT_DIRECTORY = VCS_DATA_DIRECTORY + "\\" + "FILE_CONTENTS";
-    private static final String VCS_REPOSITORY_INFO        = VCS_DATA_DIRECTORY + "\\" + "INFO";
+    private static final String VCS_COMMIT_DATA_DIRECTORY  = VCS_DATA_DIRECTORY + SEP + "COMMITS";
+    private static final String VCS_BRANCH_DATA_DIRECTORY  = VCS_DATA_DIRECTORY + SEP + "BRANCHES";
+    private static final String VCS_FILE_DATA_DIRECTORY    = VCS_DATA_DIRECTORY + SEP + "FILE_DATAS";
+    private static final String VCS_FILE_CONTENT_DIRECTORY = VCS_DATA_DIRECTORY + SEP + "FILE_CONTENTS";
+    private static final String VCS_REPOSITORY_INFO        = VCS_DATA_DIRECTORY + SEP + "INFO";
     private static final int BUFFER_SIZE = 2048;
     private static final Logger logger = LogManager.getLogger(VCSFilesystemDataController.class);
 
@@ -45,13 +46,13 @@ public class VCSFilesystemDataController implements VCSDataController {
         Path path = Paths.get(directory).toAbsolutePath();
         Path tmp;
         while (!path.equals(path.getRoot())) {
-            tmp = Paths.get(path.toString() + "\\" + VCS_DATA_DIRECTORY);
+            tmp = Paths.get(path.toString() + SEP + VCS_DATA_DIRECTORY);
             if (tmp.toFile().exists()) {
                 break;
             }
             path = path.getParent();
         }
-        tmp = Paths.get(path.toString() + "\\" + VCS_DATA_DIRECTORY);
+        tmp = Paths.get(path.toString() + SEP + VCS_DATA_DIRECTORY);
         if (tmp.toFile().exists()) {
             repositoryPath = path.toString();
         } else {
@@ -71,10 +72,10 @@ public class VCSFilesystemDataController implements VCSDataController {
         } catch (NotRepositoryException e) {
             //Thats what I expected
         }
-        Files.createDirectories(Paths.get(directory + "\\" + VCS_BRANCH_DATA_DIRECTORY));
-        Files.createDirectories(Paths.get(directory + "\\" + VCS_COMMIT_DATA_DIRECTORY));
-        Files.createDirectories(Paths.get(directory + "\\" + VCS_FILE_DATA_DIRECTORY));
-        Files.createDirectories(Paths.get(directory + "\\" + VCS_FILE_CONTENT_DIRECTORY));
+        Files.createDirectories(Paths.get(directory + SEP + VCS_BRANCH_DATA_DIRECTORY));
+        Files.createDirectories(Paths.get(directory + SEP + VCS_COMMIT_DATA_DIRECTORY));
+        Files.createDirectories(Paths.get(directory + SEP + VCS_FILE_DATA_DIRECTORY));
+        Files.createDirectories(Paths.get(directory + SEP + VCS_FILE_CONTENT_DIRECTORY));
 
         BranchData masterBranch = new BranchData();
         CommitData initialCommit = new CommitData();
@@ -90,11 +91,11 @@ public class VCSFilesystemDataController implements VCSDataController {
         info.getBranchIDs().put(masterBranch.getName(), masterBranch.getIndex());
 
         saveSomething(initialCommit,
-                directory + "\\" + VCS_COMMIT_DATA_DIRECTORY + "\\0");
+                directory + SEP + VCS_COMMIT_DATA_DIRECTORY + SEP + "0");
         saveSomething(masterBranch,
-                directory + "\\" + VCS_BRANCH_DATA_DIRECTORY + "\\0");
+                directory + SEP + VCS_BRANCH_DATA_DIRECTORY + SEP + "0");
         saveSomething(info,
-                directory + "\\" + VCS_REPOSITORY_INFO);
+                directory + SEP + VCS_REPOSITORY_INFO);
     }
 
     static public VCSFilesystemDataController getInstance() throws NotRepositoryException {
@@ -106,25 +107,30 @@ public class VCSFilesystemDataController implements VCSDataController {
     }
 
     @Override
+    public String sep() {
+        return SEP;
+    }
+
+    @Override
     public Integer findBranchByName(String branchName) throws IOException {
         return getRepositoryInfo().getBranchIDs().get(branchName);
     }
 
     @Override
     public byte[] calculateHash(String path) {
-        return calculateHash(Paths.get(repositoryPath + "\\" + path).toFile());
+        return calculateHash(Paths.get(repositoryPath + SEP + path).toFile());
     }
 
     @Override
     public void saveCommitData(CommitData commit) throws IOException {
         saveSomething(commit,
-                repositoryPath + "\\" + VCS_COMMIT_DATA_DIRECTORY + "\\" + commit.getIndex());
+                repositoryPath + SEP + VCS_COMMIT_DATA_DIRECTORY + SEP + commit.getIndex());
     }
 
     @Override
     public void saveBranchData(BranchData branch) throws IOException {
         saveSomething(branch,
-                repositoryPath + "\\" + VCS_BRANCH_DATA_DIRECTORY + "\\" + branch.getIndex());
+                repositoryPath + SEP + VCS_BRANCH_DATA_DIRECTORY + SEP + branch.getIndex());
         RepositoryInfo info = getRepositoryInfo();
         info.getBranchIDs().put(branch.getName(), branch.getIndex());
         saveRepositoryInfo(info);
@@ -133,51 +139,51 @@ public class VCSFilesystemDataController implements VCSDataController {
     @Override
     public void saveRepositoryInfo(RepositoryInfo info) throws IOException {
         saveSomething(info,
-                repositoryPath + "\\" + VCS_REPOSITORY_INFO);
+                repositoryPath + SEP + VCS_REPOSITORY_INFO);
     }
 
     @Override
     public void saveTrackedFileData(TrackedFileData data) throws IOException {
         saveSomething(data,
-                repositoryPath + "\\" + VCS_FILE_DATA_DIRECTORY + "\\" + data.getIndex());
+                repositoryPath + SEP + VCS_FILE_DATA_DIRECTORY + SEP + data.getIndex());
     }
 
     @Override
     public void saveTrackedFileData(TrackedFileData data, String fileContent) throws IOException {
         saveSomething(data,
-                repositoryPath + "\\" + VCS_FILE_DATA_DIRECTORY + "\\" + data.getIndex());
+                repositoryPath + SEP + VCS_FILE_DATA_DIRECTORY + SEP + data.getIndex());
         saveSomething(fileContent,
-                repositoryPath + "\\" + VCS_FILE_CONTENT_DIRECTORY + "\\" + data.getIndex());
+                repositoryPath + SEP + VCS_FILE_CONTENT_DIRECTORY + SEP + data.getIndex());
     }
 
     @Override
     public RepositoryInfo getRepositoryInfo() throws IOException {
-        return (RepositoryInfo)loadSomething("\\" + VCS_REPOSITORY_INFO);
+        return (RepositoryInfo)loadSomething(SEP + VCS_REPOSITORY_INFO);
     }
 
     @Override
     public CommitData getCommitData(Integer index) throws IOException {
-        return (CommitData) loadSomething("\\" + VCS_COMMIT_DATA_DIRECTORY + "\\" + index);
+        return (CommitData) loadSomething(SEP + VCS_COMMIT_DATA_DIRECTORY + SEP + index);
     }
 
     @Override
     public BranchData getBranchData(Integer index) throws IOException {
-        return (BranchData) loadSomething("\\" + VCS_BRANCH_DATA_DIRECTORY + "\\" + index);
+        return (BranchData) loadSomething(SEP + VCS_BRANCH_DATA_DIRECTORY + SEP + index);
     }
 
     @Override
     public TrackedFileData getTrackedFileData(Integer index) throws IOException {
-        return (TrackedFileData) loadSomething("\\" + VCS_FILE_DATA_DIRECTORY + "\\" + index);
+        return (TrackedFileData) loadSomething(SEP + VCS_FILE_DATA_DIRECTORY + SEP + index);
     }
 
     @Override
     public String getTrackedFileContent(Integer index) throws IOException {
-        return (String) loadSomething("\\" + VCS_FILE_CONTENT_DIRECTORY + "\\" + index);
+        return (String) loadSomething(SEP + VCS_FILE_CONTENT_DIRECTORY + SEP + index);
     }
 
     @Override
     public String getFileContent(String path) throws IOException {
-        File file = Paths.get(repositoryPath + "\\" + path).toFile();
+        File file = Paths.get(repositoryPath + SEP + path).toFile();
         if (file.exists()) {
             FileInputStream fileIn = new FileInputStream(file);
             Reader r = new InputStreamReader(fileIn);
@@ -198,12 +204,12 @@ public class VCSFilesystemDataController implements VCSDataController {
         if (path.equals("")) {
             dirPath = repositoryPath;
         } else {
-            dirPath = repositoryPath + "\\" + path;
+            dirPath = repositoryPath + SEP + path;
         }
         if (Files.exists(Paths.get(dirPath))) {
             return Files.walk(Paths.get(dirPath))
                     .filter(Files::isRegularFile)
-                    .filter((p) -> !p.startsWith(repositoryPath + "\\" + VCS_DATA_DIRECTORY))
+                    .filter((p) -> !p.startsWith(repositoryPath + SEP + VCS_DATA_DIRECTORY))
                     .map((p) -> p.toString().substring(repositoryPath.length() + 1))
                     .collect(Collectors.toList());
         } else {
@@ -228,12 +234,12 @@ public class VCSFilesystemDataController implements VCSDataController {
                 .forEach((TrackedFileData d) -> pathToFileData.put(d.getPath(), d));
         String dirPath = repositoryPath;
         if (!path.equals("")) {
-            dirPath = repositoryPath + "\\" + path;
+            dirPath = repositoryPath + SEP + path;
         }
         if (Files.exists(Paths.get(dirPath))) {
             return Files.walk(Paths.get(repositoryPath))
                     .filter(Files::isRegularFile)
-                    .filter((p) -> !p.startsWith(repositoryPath + "\\" + VCS_DATA_DIRECTORY))
+                    .filter((p) -> !p.startsWith(repositoryPath + SEP + VCS_DATA_DIRECTORY))
                     .filter((p) -> pathToFileData.containsKey(p.toString().substring(repositoryPath.length() + 1)))
                     .filter((p) -> !Arrays.equals(calculateHash(p.toFile()),
                             pathToFileData.get(p.toString().substring(repositoryPath.length() + 1)).getHash()))
@@ -246,13 +252,13 @@ public class VCSFilesystemDataController implements VCSDataController {
 
     @Override
     public void removeCommitData(Integer index) throws IOException {
-        removeSomething("\\" + VCS_COMMIT_DATA_DIRECTORY + "\\" + index);
+        removeSomething(SEP + VCS_COMMIT_DATA_DIRECTORY + SEP + index);
     }
 
     @Override
     public void removeBranchData(Integer index) throws IOException {
         BranchData branch = getBranchData(index);
-        removeSomething("\\" + VCS_BRANCH_DATA_DIRECTORY + "\\" + index);
+        removeSomething(SEP + VCS_BRANCH_DATA_DIRECTORY + SEP + index);
         RepositoryInfo info = getRepositoryInfo();
         info.getBranchIDs().remove(branch.getName());
         saveRepositoryInfo(info);
@@ -260,13 +266,13 @@ public class VCSFilesystemDataController implements VCSDataController {
 
     @Override
     public void removeTrackedFileData(Integer index) throws IOException {
-        removeSomething("\\" + VCS_FILE_DATA_DIRECTORY + "\\" + index);
-        removeSomething("\\" + VCS_FILE_CONTENT_DIRECTORY + "\\" + index);
+        removeSomething(SEP + VCS_FILE_DATA_DIRECTORY + SEP + index);
+        removeSomething(SEP + VCS_FILE_CONTENT_DIRECTORY + SEP + index);
     }
 
     @Override
     public void removeFile(String path) throws IOException {
-        removeSomething("\\" + path);
+        removeSomething(SEP + path);
     }
 
     @Override
@@ -278,7 +284,7 @@ public class VCSFilesystemDataController implements VCSDataController {
     @Override
     public void restoreFile(Integer index) throws IOException {
         TrackedFileData fileData = getTrackedFileData(index);
-        File file = Paths.get(repositoryPath + "\\" + fileData.getPath()).toFile();
+        File file = Paths.get(repositoryPath + SEP + fileData.getPath()).toFile();
         if (!file.getParentFile().exists()) {
             Files.createDirectories(Paths.get(file.getParentFile().getAbsolutePath()));
         }
@@ -292,7 +298,7 @@ public class VCSFilesystemDataController implements VCSDataController {
 
 
     private void removeSomething(String where) throws IOException {
-        Path path = Paths.get(repositoryPath + "\\"+ where);
+        Path path = Paths.get(repositoryPath + SEP+ where);
         if (Files.isDirectory(path)) {
             List<Path> filesList = Files.list(path).collect(Collectors.toList());
             while (filesList.size() > 0) {

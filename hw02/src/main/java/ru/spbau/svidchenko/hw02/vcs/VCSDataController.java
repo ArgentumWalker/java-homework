@@ -11,12 +11,17 @@ import java.util.List;
 
 /**
  * Interface for Data Controller for resolving tasks.
- * There are three rules about paths:
+ * There are two rules about paths:
  * 1) Empty path - all files in repository
- * 2) If there are any files with prefix path + '\\', then path is directory which contains all files with such prefix in their path
- * 3) Path divider is '\\'
+ * 2) If there are any files with prefix path + sep(), then path is directory which contains all files with such prefix in their path
  */
 public interface VCSDataController {
+
+    /**
+     * Returns path separator
+     */
+    String sep();
+
     /**
      * Return branch id by it's name
      */
