@@ -81,27 +81,12 @@ public class VCSFilesystemDataController implements VCSDataController {
         RepositoryInfo info = new RepositoryInfo();
 
         masterBranch.setName("master");
-        masterBranch.setIndex(0);
-        masterBranch.setCommitIndexes(new ArrayList<>());
         masterBranch.getCommitIndexes().add(0);
-        masterBranch.setLastCommit(0);
 
-        initialCommit.setBranch(0);
         initialCommit.setUser(System.getProperty("user.name"));
-        initialCommit.setIndex(0);
         initialCommit.setTrackedFiles(new ArrayList<>());
-        initialCommit.setChilds(new ArrayList<>());
-        initialCommit.setParents(new ArrayList<>());
         initialCommit.setMessage("Empty initial commit");
-        initialCommit.setCommitTime(new Date());
 
-        info.setAddedFiles(new ArrayList<>());
-        info.setRemovedFiles(new ArrayList<>());
-        info.setCurrentCommitIndex(0);
-        info.setLastFileIndex(-1);
-        info.setLastBranchIndex(0);
-        info.setLastCommitIndex(0);
-        info.setBranchIDs(new HashMap<>());
         info.getBranchIDs().put(masterBranch.getName(), masterBranch.getIndex());
 
         saveSomething(initialCommit,

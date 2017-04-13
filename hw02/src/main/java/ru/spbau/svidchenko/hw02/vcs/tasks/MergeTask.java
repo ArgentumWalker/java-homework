@@ -73,12 +73,10 @@ public class MergeTask implements VCSTask {
         info.setLastCommitIndex(info.getLastCommitIndex() + 1);
         info.setCurrentCommitIndex(mergeCommit.getIndex());
         mergeCommit.setBranch(targetBranch);
-        mergeCommit.setChilds(new ArrayList<>());
         ArrayList<Integer> parents = new ArrayList<>();
         parents.add(targetCommit.getIndex());
         parents.add(donorCommit.getIndex());
         mergeCommit.setParents(parents);
-        mergeCommit.setCommitTime(new Date());
         mergeCommit.setMessage("Merge commit");
         mergeCommit.setUser(System.getProperty("user.name"));
         mergeCommit.setTrackedFiles(indexes);

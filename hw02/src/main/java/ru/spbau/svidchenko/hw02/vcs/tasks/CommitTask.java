@@ -77,7 +77,6 @@ public class CommitTask implements VCSTask {
         ArrayList<Integer> parents = new ArrayList<>();
         parents.add(info.getCurrentCommitIndex());
         commitData.setParents(parents);
-        commitData.setChilds(new ArrayList<>());
         commitData.setTrackedFiles(fileIndexes);
         commitData.setIndex(info.getLastCommitIndex() + 1);
         info.setLastCommitIndex(info.getLastCommitIndex() + 1);
