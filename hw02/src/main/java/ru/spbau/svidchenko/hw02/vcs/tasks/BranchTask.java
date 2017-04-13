@@ -16,37 +16,23 @@ import java.util.Date;
  * Task for create/remove branch
  */
 public class BranchTask implements VCSTask {
-    private static final int CREATE_TASK = 0;
-    private static final int REMOVE_TASK = 1;
+    public static final int CREATE_TASK = 0;
+    public static final int REMOVE_TASK = 1;
     private Integer task;
     private String targetBranch;
     private VCSDataController dataController;
 
     /**
-     * Task for create and remove branches
-     * @param args - two arguments: first if '-c' for create branch and '-r' for remove
-     *             second is target branch name
-     * @param dataController - any implementation of VCSDataController
+     * Stock constructor
+     * @param task is CONSTRUCTOR_TASK or REMOVE_TASK
      */
-    public BranchTask(String[] args, VCSDataController dataController) throws WrongArgumentsException {
+    public BranchTask(Integer task, String targetBranchName, VCSDataController dataController) throws WrongArgumentsException {
         this.dataController = dataController;
-
-        if (args.length != 2) {
+        if (task != CREATE_TASK && task != REMOVE_TASK) {
             throw new WrongArgumentsException();
         }
-
-        task = -1;
-        if (args[0].toLowerCase().equals("-c")) {
-            task = CREATE_TASK;
-        }
-        if (args[0].toLowerCase().equals("-r")) {
-            task = REMOVE_TASK;
-        }
-        if (task < 0) {
-            throw new WrongArgumentsException();
-        }
-
-        targetBranch = args[1];
+        targetBranch = targetBranchName;
+        this.task = task;
     }
 
     @Override

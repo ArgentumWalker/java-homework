@@ -1,10 +1,11 @@
 package ru.spbau.svidchenko.hw02.vcs;
 
-import ru.spbau.svidchenko.hw02.vcs.data.BranchData;
-import ru.spbau.svidchenko.hw02.vcs.data.CommitData;
 import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.*;
+import ru.spbau.svidchenko.hw02.vcs.results.LogResult;
+import ru.spbau.svidchenko.hw02.vcs.results.StatusResult;
 import ru.spbau.svidchenko.hw02.vcs.tasks.*;
+import org.apache.logging.log4j.*;
 
 import java.io.IOException;
 
@@ -12,9 +13,13 @@ import java.io.IOException;
  * Main class of my VCS console interface
  */
 public class Main {
+    private static final Logger logger = LogManager.getLogger("Main");
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         try {
+            if (args.length == 0) {
+                System.out.println("What do ya want from me? \n I have nothing!");
+            }
             if (args[0].toLowerCase().equals("help")) {
                 System.out.println(
                         "VCS: simple version control system\n" +
@@ -28,12 +33,21 @@ public class Main {
                         "   'checkout [target type] [target]' - change viewed revision\n" +
                         "       [target type] - is '-c' for commits or '-b' for branches\n" +
                         "       [target] - is branch name or commit index\n" +
-                        "       Hint: You can use this commend without arguments to know exist branches\n" +
+                        "       Hint: You can use this command without arguments to get list of exist branches\n" +
                         "   'commit [message]' - commit all changes from repository\n" +
                         "       [message] - any string to identify commit\n" +
                         "   'merge [donor branch]' - merge two branches\n" +
-                        "       [donor branch] - changes will be token from this branch\n" +
-                        "       Changes will be stored at current branch\n"
+                        "       [donor branch] - changes will be taken from this branch\n" +
+                        "       Changes will be stored at current branch\n" +
+                        "   'add [path]' - track all changed files in this path\n" +
+                        "       [path] - path to any directory or file in repository\n" +
+                        "   'remove [path]' - remove tracked files\n" +
+                        "       [path] - path to any directory or file in repository\n" +
+                        "   'reset [path]' - remove all changes in files\n" +
+                        "       [path] - path to any directory or file in repository\n" +
+                        "   'clean [path]' - remove all untracked (not commited) files\n" +
+                        "       [path] - path to any directory or file in repository\n" +
+                        "   'status' - show information about all files in repository\n"
                 );
                 return;
             }
@@ -43,26 +57,48 @@ public class Main {
             }
             if (args[0].toLowerCase().equals("log")) {
                 VCSDataController dataController = VCSFilesystemDataController.getInstance();
-                CommitData currentCommit = dataController.getCommitData(
-                        dataController.getRepositoryInfo().getCurrentCommitIndex()
-                );
-                BranchData currentBranch = dataController.getBranchData(currentCommit.getBranch());
-                System.out.println("Branch: " + currentBranch.getName());
-                for (Integer i : currentBranch.getCommitIndexes()) {
-                    CommitData commit = dataController.getCommitData(i);
-                    System.out.println(i + ": " + commit.getMessage() + " "
-                            + "(by " + commit.getUser() + " from " + commit.getCommitTime() + ")");
+                LogResult logResult = new SimpleVCSController(dataController).log();
+                for (LogResult.LogResultCommit commit : logResult.getAll()) {
+                    System.out.println(
+                            commit.getCommitID() + ": " + commit.getCommitName() + " in branch " + commit.getBranchName());
                 }
                 return;
             }
-            VCSTask task = null;
-            String[] taskArgs = new String[args.length - 1];
-            for (int i = 1; i < args.length; i++) {
-                taskArgs[i - 1] = args[i];
+            if (args[0].toLowerCase().equals("status")) {
+                VCSDataController dataController = VCSFilesystemDataController.getInstance();
+                StatusResult statusResult = new SimpleVCSController(dataController).status();
+                System.out.println("Tracked changes:");
+                System.out.println(">New files:");
+                for (String filePath : statusResult.getTrackedAddedFiles()) {
+                    System.out.println("--->" + filePath);
+                }
+                System.out.println(">Changed files:");
+                for (String filePath : statusResult.getTrackedChangedFiles()) {
+                    System.out.println("--->" + filePath);
+                }
+                System.out.println(">Removed files:");
+                for (String filePath : statusResult.getTrackedRemovedFiles()) {
+                    System.out.println("--->" + filePath);
+                }
+                System.out.println("Untracked changes:");
+                System.out.println(">New files:");
+                for (String filePath : statusResult.getUntrackedAddedFiles()) {
+                    System.out.println("--->" + filePath);
+                }
+                System.out.println(">Changed files:");
+                for (String filePath : statusResult.getUntrackedChangedFiles()) {
+                    System.out.println("--->" + filePath);
+                }
+                System.out.println(">Removed files:");
+                for (String filePath : statusResult.getUntrackedRemovedFiles()) {
+                    System.out.println("--->" + filePath);
+                }
+                return;
             }
             VCSDataController dataController = VCSFilesystemDataController.getInstance();
+            VCSController controller = new SimpleVCSController(dataController);
             if (args[0].toLowerCase().equals("branch")) {
-                if (taskArgs.length == 0) {
+                if (args.length == 1) {
                     RepositoryInfo info = dataController.getRepositoryInfo();
                     for (String branchname : info.getBranchIDs().keySet()) {
                         System.out.println(branchname);
@@ -73,21 +109,94 @@ public class Main {
                     );
                     return;
                 }
-                task = new BranchTask(taskArgs, dataController);
+                if (args.length != 3) {
+                    throw new WrongArgumentsException();
+                }
+
+                Integer task = -1;
+                if (args[1].toLowerCase().equals("-c")) {
+                    task = BranchTask.CREATE_TASK;
+                }
+                if (args[1].toLowerCase().equals("-r")) {
+                    task = BranchTask.REMOVE_TASK;
+                }
+                if (task < 0) {
+                    throw new WrongArgumentsException();
+                }
+
+                logger.info("^ target branch {}", args[2]);
+                String targetBranch = args[2];
+                controller.branch(task, targetBranch);
+                //task = new BranchTask(taskArgs, dataController);
             }
             if (args[0].toLowerCase().equals("checkout")) {
-                task = new CheckoutTask(taskArgs, dataController);
+                if (args.length != 3) {
+                    throw new WrongArgumentsException();
+                }
+                if (args[1].toLowerCase().equals("-b")) {
+                    controller.checkout(args[2]);
+                    return;
+                }
+                if (args[1].toLowerCase().equals("-c")) {
+                    Integer id = Integer.decode(args[2]);
+                    controller.checkout(id);
+                    return;
+                }
+                throw new WrongArgumentsException();
             }
             if (args[0].toLowerCase().equals("commit")) {
-                task = new CommitTask(taskArgs, dataController);
+                if (args.length != 2) {
+                    throw new WrongArgumentsException();
+                }
+                String message = args[1];
+                controller.commit(message);
+            }
+            if (args[0].toLowerCase().equals("add")) {
+                if (args.length != 2) {
+                    throw new WrongArgumentsException();
+                }
+                String path = args[1];
+                controller.add(path);
+            }
+            if (args[0].toLowerCase().equals("remove")) {
+                if (args.length != 2) {
+                    throw new WrongArgumentsException();
+                }
+                String path = args[1];
+                controller.remove(path);
+            }
+            if (args[0].toLowerCase().equals("clean")) {
+                if (args.length != 2) {
+                    throw new WrongArgumentsException();
+                }
+                String path = args[1];
+                controller.clean(path);
+            }
+            if (args[0].toLowerCase().equals("reset")) {
+                if (args.length != 2) {
+                    throw new WrongArgumentsException();
+                }
+                String path = args[1];
+                controller.reset(path);
             }
             if (args[0].toLowerCase().equals("merge")) {
-                task = new MergeTask(taskArgs, dataController);
+                if (args.length != 2) {
+                    throw new WrongArgumentsException();
+                }
+                String donorBranch = args[1];
+                String targetBranch = dataController.getBranchData(dataController.getCommitData(
+                        dataController.getRepositoryInfo().getCurrentCommitIndex())
+                        .getBranch()).getName();
+                controller.merge(donorBranch, targetBranch);
             }
-            task.execute();
         } catch (WrongArgumentsException e) {
             System.out.println("Wrong number of arguments, try 'help' for more information.");
         } catch (IOException e) {
+            logger.fatal("IO Exception\nError message:{}\nStackTrace:{}", e.getMessage(), e.getStackTrace());
+            System.out.println("FATAL: Repository files are crashed");
+        } catch (BadIOException e) {
+            logger.fatal("BadIO Exception\nError message:{}\nStackTrace:{}",
+                    e.getCause().getMessage(), e.getCause().getStackTrace());
             System.out.println("FATAL: Repository files are crashed");
         } catch (NotRepositoryException e) {
             System.out.println("This directory do not belongs to any repository");
@@ -95,7 +204,15 @@ public class Main {
             System.out.println("Branch not exist. Try 'branch' command to know branch names");
         } catch (CommitNotExistException e) {
             System.out.println("Commit not exist. Try 'log' command to know branch names");
+        } catch (AlreadyARepositoryException e) {
+            System.out.println("Directory is already a repository");
+        } catch (MergeConflictsException e) {
+            System.out.println("There are some merge conflicts: ");
+            for (String file : e.gerConflictFiles()) {
+                System.out.println(">" + file + " automatically resolved by file from branch " + e.getStandardSolutionBranchName(file));
+            }
         } catch (VCSException e) {
+            logger.error("Unknown Exception\nError message:{}\nStackTrace:{}", e.getMessage(), e.getStackTrace());
             System.out.println("Something wrong. Try to check typed arguments and try again");
         }
     }

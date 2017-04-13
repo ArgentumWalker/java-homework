@@ -11,22 +11,22 @@ public class BranchData implements Serializable {
     /**
      * index of branch
      */
-    private Integer index;
+    private Integer index = 0;
 
     /**
      * index of last commit in branch
      */
-    private Integer lastCommit;
+    private Integer lastCommit = 0;
 
     /**
      * name of branch
      */
-    private String name;
+    private String name = "";
 
     /**
      * list of all commits in branch
      */
-    private ArrayList<Integer> commitIndexes;
+    private ArrayList<Integer> commitIndexes = new ArrayList<>();
 
     public BranchData() {
     }

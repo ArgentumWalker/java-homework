@@ -12,42 +12,42 @@ public class CommitData implements Serializable {
     /**
      * index of commit
      */
-    private Integer index;
+    private Integer index = 0;
 
     /**
      * indexes of parent commits
      */
-    private ArrayList<Integer> parents;
+    private ArrayList<Integer> parents = new ArrayList<>();
 
     /**
      * indexes of child commits
      */
-    private ArrayList<Integer> childs;
+    private ArrayList<Integer> childs = new ArrayList<>();
 
     /**
      * commit branch
      */
-    private Integer branch;
+    private Integer branch = 0;
 
     /**
      * author of commit
      */
-    private String user;
+    private String user = "";
 
     /**
      * time of commit
      */
-    private Date commitTime;
+    private Date commitTime = new Date();
 
     /**
      * message of commit
      */
-    private String message;
+    private String message = "";
 
     /**
      * list of indexes of all tracked by commit files
      */
-    private ArrayList<Integer> trackedFiles;
+    private ArrayList<Integer> trackedFiles = new ArrayList<>();
 
     public Integer getIndex() {
         return index;

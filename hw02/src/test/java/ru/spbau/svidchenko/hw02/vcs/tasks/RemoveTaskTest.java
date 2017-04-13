@@ -6,8 +6,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import ru.spbau.svidchenko.hw02.vcs.SimpleVCSController;
 import ru.spbau.svidchenko.hw02.vcs.VCSFilesystemDataController;
-import ru.spbau.svidchenko.hw02.vcs.data.BranchData;
-import ru.spbau.svidchenko.hw02.vcs.data.CommitData;
 import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.NotRepositoryException;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.VCSException;
@@ -19,7 +17,7 @@ import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
 
-public class BranchTaskTest {
+public class RemoveTaskTest {
     @Rule
     public TemporaryFolder fldr = new TemporaryFolder();
 
@@ -39,35 +37,23 @@ public class BranchTaskTest {
         VCSFilesystemDataController.createRepository(fldr.getRoot().getAbsolutePath());
         dataController = VCSFilesystemDataController.getInstance(fldr.getRoot().getAbsolutePath());
         controller = new SimpleVCSController(dataController);
+        controller.add("");
+        controller.commit("test");
     }
 
     @Test
-    public void createAndDeleteBranch_CreateSimpleBranch_CurrentCommitOnNewBranch() throws Exception {
-        //Create
-        System.out.println("My test");
-        controller.add("");
-        controller.commit("test");
-        controller.branch(BranchTask.CREATE_TASK, "test");
+    public void remove_RemoveOneFile_Success() throws IOException, VCSException {
+        controller.remove(file1.getName());
         RepositoryInfo info = dataController.getRepositoryInfo();
-        BranchData data = dataController.getBranchData(1);
-        CommitData commit = dataController.getCommitData(2);
-        System.out.println("/My test");
-
-        assertEquals(2, (int)info.getCurrentCommitIndex());
-        assertEquals(2, (int)data.getLastCommit());
-        assertEquals(1, data.getCommitIndexes().size());
-        assertTrue(data.getCommitIndexes().contains(2));
-        assertEquals(3, commit.getTrackedFiles().size());
-        assertEquals("test", data.getName());
-        assertTrue(info.getBranchIDs().containsKey("test"));
-
-        //Delete
-        controller.checkout("master");
-        controller.branch(BranchTask.REMOVE_TASK, "test");
-        info = dataController.getRepositoryInfo();
-
-        assertFalse(info.getBranchIDs().containsKey("test"));
-        assertEquals(1, (int)info.getCurrentCommitIndex());
+        assertEquals(1, info.getRemovedFiles().size());
+        assertEquals(0, info.getAddedFiles().size());
     }
 
+    @Test
+    public void remove_RemoveDirectoryWithFile_Success() throws IOException, VCSException {
+        controller.remove(folder1.getName());
+        RepositoryInfo info = dataController.getRepositoryInfo();
+        assertEquals(1, info.getRemovedFiles().size());
+        assertEquals(0, info.getAddedFiles().size());
+    }
 }

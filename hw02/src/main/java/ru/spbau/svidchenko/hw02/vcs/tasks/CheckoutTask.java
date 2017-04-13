@@ -18,31 +18,11 @@ public class CheckoutTask implements VCSTask {
     private VCSDataController dataController;
 
     /**
-     * Task for changing review
-     * @param args - two arguments: first is '-b' for checkout to branch of '-c' for checkout to commit
-     *             second is name of branch or index of commit
-     * @param dataController - any implementation of VCSDataController
+     * Simple stock constructor
      */
-    public CheckoutTask(String[] args, VCSDataController dataController) throws WrongArgumentsException, IOException, BranchNotExistException {
+    public CheckoutTask(Integer reviewID, VCSDataController dataController) {
         this.dataController = dataController;
-        
-        if (args.length != 2) {
-            throw new WrongArgumentsException();
-        }
-        reviewID = -1;
-        if (args[0].toLowerCase().equals("-b")) {
-            Integer id = dataController.findBranchByName(args[1]);
-            if (id == null) {
-                throw new BranchNotExistException();
-            }
-            reviewID = dataController.getBranchData(id).getLastCommit();
-        }
-        if (args[0].toLowerCase().equals("-c")) {
-            reviewID = Integer.decode(args[1]);
-        }
-        if (reviewID < -1) {
-            throw new WrongArgumentsException();
-        }
+        this.reviewID = reviewID;
     }
 
     @Override

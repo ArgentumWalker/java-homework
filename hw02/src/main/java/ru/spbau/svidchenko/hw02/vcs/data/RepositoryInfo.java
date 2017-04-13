@@ -8,27 +8,37 @@ import java.util.HashMap;
  * Information about current repository
  */
 public class RepositoryInfo implements Serializable {
-    private Integer currentCommitIndex;
+    private Integer currentCommitIndex = 0;
 
     /**
      * index of last committed commit
      */
-    private Integer lastCommitIndex;
+    private Integer lastCommitIndex = 0;
 
     /**
      * index of last created branch
      */
-    private Integer lastBranchIndex;
+    private Integer lastBranchIndex = 0;
 
     /**
      * index of last stored filedata
      */
-    private Integer lastFileIndex;
+    private Integer lastFileIndex = 0;
 
     /**
      * map from all branch names to their indexes
      */
-    private HashMap<String, Integer> branchIDs;
+    private HashMap<String, Integer> branchIDs = new HashMap<>();
+
+    /**
+     * Files added by task Add
+     */
+    private ArrayList<String> addedFiles = new ArrayList<>();
+
+    /**
+     * Files removed by task Add or task Remove
+     */
+    private ArrayList<String> removedFiles = new ArrayList<>();
 
     public RepositoryInfo() {
 
@@ -72,5 +82,21 @@ public class RepositoryInfo implements Serializable {
 
     public void setBranchIDs(HashMap<String, Integer> branchIDs) {
         this.branchIDs = branchIDs;
+    }
+
+    public ArrayList<String> getAddedFiles() {
+        return addedFiles;
+    }
+
+    public void setAddedFiles(ArrayList<String> addedFiles) {
+        this.addedFiles = addedFiles;
+    }
+
+    public ArrayList<String> getRemovedFiles() {
+        return removedFiles;
+    }
+
+    public void setRemovedFiles(ArrayList<String> removedFiles) {
+        this.removedFiles = removedFiles;
     }
 }

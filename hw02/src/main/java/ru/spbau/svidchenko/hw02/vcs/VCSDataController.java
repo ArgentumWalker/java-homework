@@ -5,18 +5,27 @@ import ru.spbau.svidchenko.hw02.vcs.data.CommitData;
 import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
 import ru.spbau.svidchenko.hw02.vcs.data.TrackedFileData;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 /**
  * Interface for Data Controller for resolving tasks.
+ * There are three rules about paths:
+ * 1) Empty path - all files in repository
+ * 2) If there are any files with prefix path + '\\', then path is directory which contains all files with such prefix in their path
+ * 3) Path divider is '\\'
  */
 public interface VCSDataController {
     /**
      * Return branch id by it's name
-     * @throws IOException
      */
     Integer findBranchByName(String branchName) throws IOException;
+
+    /**
+     * Calculate hash of file by path in repository
+     */
+    byte[] calculateHash(String path);
 
     /**
      * Store commit data
@@ -83,7 +92,13 @@ public interface VCSDataController {
      * Get list of all files in repository
      * List contains correct paths to files in repository
      */
-    List<String> getAllFilesInRepository() throws IOException;
+    List<String> getAllFiles(String path) throws IOException;
+
+    /**
+     * Get list of all files with changes in repository subdirectory
+     * List contains correct paths to files in repository
+     */
+    List<String> getChangedFiles(String path) throws IOException;
 
     /**
      * Remove commit data from repository
@@ -99,6 +114,11 @@ public interface VCSDataController {
      * Remove file data from repository
      */
     void removeTrackedFileData(Integer index) throws IOException;
+
+    /**
+     * Remove file from repository
+     */
+    void removeFile(String path) throws IOException;
 
     /**
      * Remove actual file with path from TrackedFileData from repo

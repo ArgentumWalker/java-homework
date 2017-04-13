@@ -8,4 +8,4 @@ env:
 
 script: 
   - cd $PROJECT_DIR
-  - gradle assemble
+  - gradle build

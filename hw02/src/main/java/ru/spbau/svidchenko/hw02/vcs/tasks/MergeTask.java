@@ -6,6 +6,7 @@ import ru.spbau.svidchenko.hw02.vcs.data.CommitData;
 import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
 import ru.spbau.svidchenko.hw02.vcs.data.TrackedFileData;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.BranchNotExistException;
+import ru.spbau.svidchenko.hw02.vcs.exceptions.MergeConflictsException;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.WrongArgumentsException;
 
 import java.io.IOException;
@@ -19,27 +20,15 @@ public class MergeTask implements VCSTask {
     private Integer targetBranch;
     private VCSDataController dataController;
 
-    /**
-     * Task for merging two branches
-     * @param args - only one element, contains name of donor branch
-     * @param dataController - any implementation of VCSDataController
-     */
-    public MergeTask(String[] args, VCSDataController dataController) throws IOException, WrongArgumentsException, BranchNotExistException {
-        if (args.length != 1) {
-            throw new WrongArgumentsException();
-        }
+    /** Simple constructor. Result will be in targetBranchID */
+    public MergeTask(Integer donorBranchID, Integer targetBranchID, VCSDataController dataController) {
+        this.donorBranch = donorBranchID;
+        this.targetBranch = targetBranchID;
         this.dataController = dataController;
-        donorBranch = dataController.findBranchByName(args[0]);
-        targetBranch = dataController.getCommitData(
-                dataController.getRepositoryInfo().getCurrentCommitIndex())
-                .getBranch();
-        if (donorBranch == null) {
-            throw new BranchNotExistException();
-        }
     }
 
     @Override
-    public void execute() throws IOException {
+    public void execute() throws IOException, MergeConflictsException {
         BranchData donor = dataController.getBranchData(donorBranch);
         BranchData target = dataController.getBranchData(targetBranch);
         CommitData donorCommit = dataController.getCommitData(donor.getLastCommit());
@@ -54,6 +43,7 @@ public class MergeTask implements VCSTask {
             donorCommitFiles.add(dataController.getTrackedFileData(i));
         }
         ArrayList<Integer> indexes = targetCommit.getTrackedFiles();
+        MergeConflictsException conflicts = new MergeConflictsException();
 
         for (TrackedFileData data : donorCommitFiles) {
             boolean changed = false;
@@ -64,12 +54,13 @@ public class MergeTask implements VCSTask {
                         targetCommitFiles.set(i, data);
                         indexes.set(i, data.getIndex());
                         dataController.restoreFile(data.getIndex());
+                        conflicts.addConflictFile(checker.getPath(), donor.getName());
+                    } else {
+                        conflicts.addConflictFile(checker.getPath(), target.getName());
                     }
                     changed = true;
                 }
             }
-            System.out.println("File: " + data.getPath());
-            System.out.println("Add: " + !changed);
             if (!changed) {
                 targetCommitFiles.add(data);
                 indexes.add(data.getIndex());
@@ -93,5 +84,9 @@ public class MergeTask implements VCSTask {
         mergeCommit.setTrackedFiles(indexes);
         dataController.saveCommitData(mergeCommit);
         dataController.saveRepositoryInfo(info);
+
+        if (conflicts.gerConflictFiles().size() > 0) {
+            throw conflicts;
+        }
     }
 }

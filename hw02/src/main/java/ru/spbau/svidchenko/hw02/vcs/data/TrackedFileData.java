@@ -2,48 +2,45 @@ package ru.spbau.svidchenko.hw02.vcs.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Scanner;
 
 /**
  * Serialized file data
  */
 public class TrackedFileData implements Serializable {
-    private Integer branchVersion;
 
     /**
      * index of file data bundle
      */
-    private Integer index;
+    private Integer index = 0;
 
     /**
      * how much commits links to that bundle
      */
-    private Integer linkCounter;
+    private Integer linkCounter = 0;
 
     /**
      * person who committed this file last
      */
-    private String lastModifyUser;
+    private String lastModifyUser = "";
 
     /**
      * bundle creation date
      */
-    private Date lastModifyDate;
+    private Date lastModifyDate = new Date();
 
     /**
      * recurent path to file
      */
-    private String path;
+    private String path = "";
+
+    /**
+     * HashCode of file content
+     */
+    private byte[] hash = new byte[0];
 
     public TrackedFileData() {
 
-    }
-
-    public Integer getBranchVersion() {
-        return branchVersion;
-    }
-
-    public void setBranchVersion(Integer branchVersion) {
-        this.branchVersion = branchVersion;
     }
 
     public Integer getIndex() {
@@ -84,5 +81,13 @@ public class TrackedFileData implements Serializable {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public byte[] getHash() {
+        return hash;
+    }
+
+    public void setHash(byte[] hash) {
+        this.hash = hash;
     }
 }
