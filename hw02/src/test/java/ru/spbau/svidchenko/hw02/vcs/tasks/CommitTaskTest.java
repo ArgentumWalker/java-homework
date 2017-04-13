@@ -98,7 +98,7 @@ public class CommitTaskTest {
 
         ArrayList<String> paths = new ArrayList<>();
         for (Integer i : data.getTrackedFiles()) {
-            paths.add(fldr.getRoot().getAbsolutePath() + "\\" + Paths.get(dataController.getTrackedFileData(i).getPath()));
+            paths.add(fldr.getRoot().getAbsolutePath() + dataController.sep() + Paths.get(dataController.getTrackedFileData(i).getPath()));
         }
 
         assertTrue(paths.contains(file1.getAbsolutePath()));

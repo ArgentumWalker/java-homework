@@ -8,7 +8,5 @@ env:
 
 script: 
   - cd $PROJECT_DIR
-  - gradle build -q
-  - cd build/reports/tests/test/classes
-  - ls | cat
+  - gradle build
   
