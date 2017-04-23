@@ -4,7 +4,7 @@ jdk:
   - oraclejdk8
 
 env:
-  - PROJECT_DIR=hw02
+  - PROJECT_DIR=hw04
 
 script: 
   - cd $PROJECT_DIR
