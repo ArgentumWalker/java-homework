@@ -185,15 +185,15 @@ public class VCSFilesystemDataController implements VCSDataController {
     public String getFileContent(String path) throws IOException {
         File file = Paths.get(repositoryPath + SEP + path).toFile();
         if (file.exists()) {
-            FileInputStream fileIn = new FileInputStream(file);
-            Reader r = new InputStreamReader(fileIn);
-            StringBuilder builder = new StringBuilder();
-            int c = 0;
-            while ((c = r.read()) != -1) {
-                builder.append((char) c);
+            try (FileInputStream fileIn = new FileInputStream(file)) {
+                Reader r = new InputStreamReader(fileIn);
+                StringBuilder builder = new StringBuilder();
+                int c = 0;
+                while ((c = r.read()) != -1) {
+                    builder.append((char) c);
+                }
+                return builder.toString();
             }
-            fileIn.close();
-            return builder.toString();
         }
         return null;
     }
@@ -291,9 +291,9 @@ public class VCSFilesystemDataController implements VCSDataController {
         if (!file.exists()) {
             file.createNewFile();
         }
-        FileOutputStream fileOut = new FileOutputStream(file);
-        fileOut.write(getTrackedFileContent(index).getBytes());
-        fileOut.close();
+        try (FileOutputStream fileOut = new FileOutputStream(file)) {
+            fileOut.write(getTrackedFileContent(index).getBytes());
+        }
     }
 
 
@@ -323,42 +323,36 @@ public class VCSFilesystemDataController implements VCSDataController {
         if (!file.exists()) {
             file.createNewFile();
         }
-        FileOutputStream fileOut = new FileOutputStream(file);
-        ObjectOutputStream out = new ObjectOutputStream(fileOut);
-        out.writeObject(o);
-        out.close();
-        fileOut.close();
+        try (FileOutputStream fileOut = new FileOutputStream(file)) {
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(o);
+        }
     }
 
     private Object loadSomething(String path) throws IOException {
         File file = Paths.get(repositoryPath + path)
                 .toFile();
-        FileInputStream fileIn = new FileInputStream(file);
-        ObjectInputStream in = new ObjectInputStream(fileIn);
-        Object result = null;
-        try {
-            result = in.readObject();
+        try (FileInputStream fileIn = new FileInputStream(file)) {
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object result = null;
+            try {
+                result = in.readObject();
+            } catch (ClassNotFoundException e) {
+                logger.fatal("if this happen, you are on highway to hell\nPath: \nStacktrace: {}", path, e.getStackTrace());
+                ////Just return null
+            }
+            return result;
         }
-        catch (ClassNotFoundException e) {
-            logger.fatal("if this happen, you are on highway to hell\nPath: \nStacktrace: {}", path, e.getStackTrace());
-            ////Just return null
-        }
-        in.close();
-        fileIn.close();
-        return result;
     }
 
     private byte[] calculateHash(File file) {
-        try {
+        try (FileInputStream fileIn = new FileInputStream(file)){
             MessageDigest digest = MessageDigest.getInstance("MD5");
-            FileInputStream fileIn = new FileInputStream(file);
             DigestInputStream inp = new DigestInputStream(fileIn, digest);
             byte[] buffer = new byte[BUFFER_SIZE];
             while (inp.read(buffer) != -1) {
 
             }
-            inp.close();
-            fileIn.close();
             return digest.digest();
         }
         catch (Exception e) {
