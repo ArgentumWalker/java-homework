@@ -24,8 +24,6 @@ public class GetTaskResolverTest {
     private PipedInputStream baseInputStream;
     private PipedOutputStream baseOutputStream;
     private DataInputStream input;
-    private DataOutputStream output;
-    private Socket socket;
 
     @Before
     public void beforeTests() throws Exception {
@@ -37,15 +35,11 @@ public class GetTaskResolverTest {
         baseInputStream = new PipedInputStream();
         baseOutputStream = new PipedOutputStream(baseInputStream);
         input = new DataInputStream(baseInputStream);
-        output = new DataOutputStream(baseOutputStream);
-        socket = mock(Socket.class);
-        when(socket.getOutputStream()).thenReturn(output);
-        when(socket.getInputStream()).thenReturn(input);
     }
 
     @Test
     public void Get_EmptyFile_Size0() throws Exception {
-        GetTaskResolver resolver = new GetTaskResolver(socket, Paths.get(file1.getAbsolutePath()));
+        GetTaskResolver resolver = new GetTaskResolver(baseOutputStream, Paths.get(file1.getAbsolutePath()));
         new Thread(resolver).start();
         long size = input.readLong();
         assertEquals(0, size);
@@ -53,7 +47,7 @@ public class GetTaskResolverTest {
 
     @Test
     public void Get_NotExistedFile_Size0() throws Exception {
-        GetTaskResolver resolver = new GetTaskResolver(socket, Paths.get(file1.getAbsolutePath() + "123abc"));
+        GetTaskResolver resolver = new GetTaskResolver(baseOutputStream, Paths.get(file1.getAbsolutePath() + "123abc"));
         new Thread(resolver).start();
         long size = input.readLong();
         assertEquals(0, size);
@@ -61,7 +55,7 @@ public class GetTaskResolverTest {
 
     @Test
     public void Get_NotEmptyFile_CorrectContent() throws Exception {
-        GetTaskResolver resolver = new GetTaskResolver(socket, Paths.get(file2.getAbsolutePath()));
+        GetTaskResolver resolver = new GetTaskResolver(baseOutputStream, Paths.get(file2.getAbsolutePath()));
         new Thread(resolver).start();
         long size = input.readLong();
         assertEquals(Files.size(Paths.get(file2.getAbsolutePath())), size);

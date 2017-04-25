@@ -3,6 +3,7 @@ package ru.spbau.svidchenko.hw04.server;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,18 +16,23 @@ import java.util.stream.Collectors;
  * If file not exist or not directory returns 0
  */
 public class ListTaskResolver implements TaskResolver {
-    private Socket socket;
     private Path path;
+    private OutputStream output;
 
-    public ListTaskResolver(Socket socket, Path path) {
-        this.socket = socket;
+    public ListTaskResolver(OutputStream output, Path path) {
         this.path = path;
+        this.output = output;
     }
 
     @Override
     public void run() {
         try {
-            DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+            /*System.out.println(path);
+            for (byte b : path.toString().getBytes()) {
+                System.out.print(b + " ");
+            }System.out.println();
+            System.out.println(Files.exists(path));*/
+            DataOutputStream output = new DataOutputStream(this.output);
             if (Files.exists(path) && Files.isDirectory(path)) {
                 List<Path> files = Files.list(path).collect(Collectors.toList());
                 output.writeLong(files.size());

@@ -27,9 +27,7 @@ public class ListTaskResolverTest {
     private PipedInputStream baseInputStream;
     private PipedOutputStream baseOutputStream;
     private DataInputStream input;
-    private DataOutputStream output;
     private HashMap<String, Boolean> answers = new HashMap<>();
-    private Socket socket;
 
     @Before
     public void beforeTests() throws Exception {
@@ -44,15 +42,11 @@ public class ListTaskResolverTest {
         baseInputStream = new PipedInputStream();
         baseOutputStream = new PipedOutputStream(baseInputStream);
         input = new DataInputStream(baseInputStream);
-        output = new DataOutputStream(baseOutputStream);
-        socket = mock(Socket.class);
-        when(socket.getOutputStream()).thenReturn(output);
-        when(socket.getInputStream()).thenReturn(input);
     }
 
     @Test
     public void List_EmptyDirectory_Size0() throws Exception {
-        ListTaskResolver resolver = new ListTaskResolver(socket, Paths.get(dir1.getAbsolutePath()));
+        ListTaskResolver resolver = new ListTaskResolver(baseOutputStream, Paths.get(dir1.getAbsolutePath()));
         new Thread(resolver).start();
         long size = input.readLong();
         assertEquals(0, size);
@@ -60,7 +54,7 @@ public class ListTaskResolverTest {
 
     @Test
     public void List_NotExistedDirectory_Size0() throws Exception {
-        ListTaskResolver resolver = new ListTaskResolver(socket, Paths.get(dir1.getAbsolutePath() + "abacada"));
+        ListTaskResolver resolver = new ListTaskResolver(baseOutputStream, Paths.get(dir1.getAbsolutePath() + "abacada"));
         new Thread(resolver).start();
         long size = input.readLong();
         assertEquals(0, size);
@@ -68,7 +62,7 @@ public class ListTaskResolverTest {
 
     @Test
     public void List_NotEmptyDirectory_CorrectFiles() throws Exception {
-        ListTaskResolver resolver = new ListTaskResolver(socket, Paths.get(dir2.getAbsolutePath()));
+        ListTaskResolver resolver = new ListTaskResolver(baseOutputStream, Paths.get(dir2.getAbsolutePath()));
         new Thread(resolver).start();
         long size = input.readLong();
         assertEquals(3, size);

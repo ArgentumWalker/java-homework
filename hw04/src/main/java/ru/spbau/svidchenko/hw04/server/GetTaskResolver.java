@@ -1,9 +1,6 @@
 package ru.spbau.svidchenko.hw04.server;
 
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,18 +13,18 @@ import java.nio.file.Path;
 public class GetTaskResolver implements TaskResolver {
     private final static int BUFFER_SIZE = 2048;
 
-    private Socket socket;
+    private OutputStream output;
     private Path path;
 
-    public GetTaskResolver(Socket socket, Path path) {
-        this.socket = socket;
+    public GetTaskResolver(OutputStream output, Path path) {
         this.path = path;
+        this.output = output;
     }
 
     @Override
     public void run() {
         try {
-            DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+            DataOutputStream output = new DataOutputStream(this.output);
             if (Files.exists(path) && !Files.isDirectory(path)) {
                 long fileSize = Files.size(path);
                 output.writeLong(fileSize);

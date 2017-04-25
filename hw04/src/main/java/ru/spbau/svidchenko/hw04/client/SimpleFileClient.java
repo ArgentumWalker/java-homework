@@ -28,17 +28,18 @@ public class SimpleFileClient implements FileClient {
         try (Socket socket = new Socket(serverAddress, serverPort)) {
             DataOutputStream output = new DataOutputStream(socket.getOutputStream());
             output.writeInt(1);
-            output.writeUTF(path);
+            output.writeInt(path.getBytes().length);
+            output.write(path.getBytes());
             ArrayList<Pair<String, Boolean>> result = new ArrayList<>();
             DataInputStream input = new DataInputStream(socket.getInputStream());
-            long size = input.readLong();
+            /*long size = input.readLong();
             for (long i = 0; i < size; i++) {
                 boolean isDirectory;
                 String filename;
                 filename = input.readUTF();
                 isDirectory = input.readBoolean();
                 result.add(new Pair<>(filename, isDirectory));
-            }
+            }*/
             return result;
         }
         catch (Throwable e) {
@@ -52,7 +53,8 @@ public class SimpleFileClient implements FileClient {
         try (Socket socket = new Socket(serverAddress, serverPort)) {
             DataOutputStream output = new DataOutputStream(socket.getOutputStream());
             output.writeInt(2);
-            output.writeUTF(path);
+            output.writeInt(path.getBytes().length);
+            output.write(path.getBytes());
             DataInputStream input = new DataInputStream(socket.getInputStream());
             long size = input.readLong();
             byte[] bytes = new byte[(int)size];

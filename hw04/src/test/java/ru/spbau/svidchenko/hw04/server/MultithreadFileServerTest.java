@@ -51,7 +51,9 @@ public class MultithreadFileServerTest {
         DataInputStream input = new DataInputStream(socket.getInputStream());
         DataOutputStream output = new DataOutputStream(socket.getOutputStream());
         output.writeInt(1);
-        output.writeUTF(fldr.getRoot().getAbsolutePath());
+        output.writeInt(fldr.getRoot().getAbsolutePath().getBytes().length);
+        output.write(fldr.getRoot().getAbsolutePath().getBytes());
+        //output.writeUTF(fldr.getRoot().getAbsolutePath());
         //output.close();
         int count = (int)input.readLong();
         assertEquals(3, count);
@@ -71,13 +73,12 @@ public class MultithreadFileServerTest {
         DataInputStream input = new DataInputStream(socket.getInputStream());
         DataOutputStream output = new DataOutputStream(socket.getOutputStream());
         output.writeInt(2);
-        output.writeUTF(file2.getAbsolutePath());
-        //output.close();
+        output.writeInt(file2.getAbsolutePath().getBytes().length);
+        output.write(file2.getAbsolutePath().getBytes());
         long size = input.readLong();
         assertEquals(Files.size(Paths.get(file2.getAbsolutePath())), size);
         byte[] bytes = new byte[(int)size];
         input.readFully(bytes);
         assertArrayEquals(file2Content, bytes);
     }
-
 }
