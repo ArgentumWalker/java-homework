@@ -50,7 +50,7 @@ public class SimpleFileClientTest {
 
     /*@Test
     public void ListTask_ListAnyDirectory_CompleteWithSuccess() throws Exception {
-        /*System.out.println(fldr.getRoot().getAbsolutePath());
+        System.out.println(fldr.getRoot().getAbsolutePath());
         for (byte b : fldr.getRoot().getAbsolutePath().getBytes()) {
             System.out.print(b + " ");
         }System.out.println();

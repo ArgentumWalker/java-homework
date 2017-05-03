@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<GridPane alignment="center" hgap="1" vgap="1" fx:controller="ru.spbau.svidchenko.hw04.gui.Main" xmlns:fx="http://javafx.com/fxml"
+          maxHeight="Infinity"
+          maxWidth="Infinity">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
+    </columnConstraints>
+
+    <Button
+        fx:id="CreateServerBtn"
+        GridPane.columnIndex="1"
+        GridPane.rowIndex="0"
+        text="Create New Server"
+        onAction="#onCreateServerClick"
+        />
+    <Button
+        fx:id="StartClientBtn"
+        GridPane.columnIndex="1"
+        GridPane.rowIndex="1"
+        text="Create New Client"
+        onAction="#onCreateClientClick"/>
+
+</GridPane>

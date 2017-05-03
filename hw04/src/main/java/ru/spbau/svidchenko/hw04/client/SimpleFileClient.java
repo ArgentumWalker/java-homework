@@ -32,14 +32,14 @@ public class SimpleFileClient implements FileClient {
             output.write(path.getBytes());
             ArrayList<Pair<String, Boolean>> result = new ArrayList<>();
             DataInputStream input = new DataInputStream(socket.getInputStream());
-            /*long size = input.readLong();
+            long size = input.readLong();
             for (long i = 0; i < size; i++) {
                 boolean isDirectory;
                 String filename;
                 filename = input.readUTF();
                 isDirectory = input.readBoolean();
                 result.add(new Pair<>(filename, isDirectory));
-            }*/
+            }
             return result;
         }
         catch (Throwable e) {

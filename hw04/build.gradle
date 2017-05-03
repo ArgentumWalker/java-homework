@@ -1,6 +1,9 @@
 version '1.0'
 
+apply plugin: 'application'
 apply plugin: 'java'
+
+mainClassName = "ru.spbau.svidchenko.hw04.gui.Main"
 
 sourceCompatibility = 1.8
 

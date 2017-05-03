@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:controller="ru.spbau.svidchenko.hw04.gui.Client" xmlns:fx="http://javafx.com/fxml"
+        maxHeight="Infinity"
+        maxWidth="Infinity">
+    <top>
+        <HBox alignment="CENTER_LEFT">
+            <Button
+                fx:id="turnBackBtn"
+                text="Turn back"
+                onAction="#onTurnBackClick"/>
+            <HBox minWidth="10"></HBox>
+            <Text
+                fx:id="pathText"
+                />
+        </HBox>
+    </top>
+    <center>
+        <ListView
+            fx:id="fileListView"
+            onMouseClicked="#onListElementClick"/>
+    </center>
+    <right>
+        <VBox alignment="TOP_CENTER">
+            <HBox>
+                <Text text="Host: "/>
+                <TextField fx:id="hostTextField"/>
+            </HBox>
+            <HBox>
+                <Text text="Port: "/>
+                <TextField fx:id="portTextField"/>
+            </HBox>
+            <Button
+                    text="Connect"
+                    onAction="#onConnectClick"/>
+            <Text fx:id="connectionInfoText"/>
+        </VBox>
+    </right>
+    <bottom>
+        <Text fx:id="errorMsgText"/>
+    </bottom>
+</BorderPane>
