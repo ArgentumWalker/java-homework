@@ -8,11 +8,10 @@
           maxHeight="Infinity"
           maxWidth="Infinity">
     <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
+        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" halignment="CENTER"/>
+        <ColumnConstraints hgrow="NEVER" minWidth="10.0" percentWidth="60.0" halignment="CENTER"/>
+        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" halignment="CENTER"/>
     </columnConstraints>
-
     <Button
         fx:id="CreateServerBtn"
         GridPane.columnIndex="1"
@@ -20,10 +19,13 @@
         text="Create New Server"
         onAction="#onCreateServerClick"
         />
+    <VBox minHeight="10"
+          GridPane.columnIndex="1"
+          GridPane.rowIndex="1"/>
     <Button
         fx:id="StartClientBtn"
         GridPane.columnIndex="1"
-        GridPane.rowIndex="1"
+        GridPane.rowIndex="2"
         text="Create New Client"
         onAction="#onCreateClientClick"/>
 

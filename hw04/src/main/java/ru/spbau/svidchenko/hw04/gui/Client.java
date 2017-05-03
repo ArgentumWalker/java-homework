@@ -42,7 +42,7 @@ public class Client {
     @FXML
     private TextField hostTextField;
     @FXML
-    private Text connectInfoText;
+    private Text connectionInfoText;
 
     private int port;
     private InetAddress address;
@@ -63,7 +63,6 @@ public class Client {
             stage.setScene(new Scene(root));
             stage.setResizable(true);
             stage.show();
-            connectInfoText.setText("Not connected yet");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -79,7 +78,7 @@ public class Client {
             client = new SimpleFileClient(address, port);
             currentPath = File.listRoots()[0].getAbsolutePath(); //FIXME: Ask about root
             goToDirectory(Paths.get(currentPath));
-            connectInfoText.setText("Connected to " + host + "::" + port);
+            connectionInfoText.setText("Connected to " + host + "::" + port);
             errorMsgText.setText("OK");
         }
         catch (Throwable e) {
