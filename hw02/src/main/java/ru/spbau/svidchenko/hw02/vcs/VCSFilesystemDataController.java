@@ -160,13 +160,14 @@ public class VCSFilesystemDataController implements VCSDataController {
     public RepositoryInfo getRepositoryInfo() throws IOException {
         RepositoryInfo info = (RepositoryInfo)loadSomething(SEP + VCS_REPOSITORY_INFO);
         List<String> changes = (List<String>)info.getAddedFiles().clone();
+        List<String> allFiles = getAllFiles("");
         changes.addAll(info.getRemovedFiles());
         info.getAddedFiles().clear();
         info.getRemovedFiles().clear();
         info.getAddedFiles().addAll(changes);
         info.getRemovedFiles().addAll(changes);
-        info.getRemovedFiles().removeAll(getAllFiles(""));
-        info.getAddedFiles().retainAll(getAllFiles(""));
+        info.getRemovedFiles().removeAll(allFiles);
+        info.getAddedFiles().retainAll(allFiles);
         saveRepositoryInfo(info);
         return info;
     }
@@ -216,12 +217,18 @@ public class VCSFilesystemDataController implements VCSDataController {
         } else {
             dirPath = repositoryPath + SEP + path;
         }
+        System.err.println("Getting everything from: " + dirPath);
         if (Files.exists(Paths.get(dirPath))) {
-            return Files.walk(Paths.get(dirPath))
-                    .filter(Files::isRegularFile)
-                    .filter((p) -> !p.startsWith(repositoryPath + SEP + VCS_DATA_DIRECTORY))
-                    .map((p) -> p.toString().substring(repositoryPath.length() + 1))
-                    .collect(Collectors.toList());
+            try {
+                return Files.walk(Paths.get(dirPath))
+                        .filter(Files::isRegularFile)
+                        .filter((p) -> !p.startsWith(repositoryPath + SEP + VCS_DATA_DIRECTORY))
+                        .map((p) -> p.toString().substring(repositoryPath.length() + 1))
+                        .collect(Collectors.toList());
+            } catch (Throwable e) {
+                e.getCause().printStackTrace();
+                throw e;
+            }
         } else {
             return new ArrayList<>();
         }
@@ -308,7 +315,7 @@ public class VCSFilesystemDataController implements VCSDataController {
 
 
     private void removeSomething(String where) throws IOException {
-        Path path = Paths.get(repositoryPath + SEP+ where);
+        Path path = Paths.get(repositoryPath + SEP + where);
         if (Files.isDirectory(path)) {
             List<Path> filesList = Files.list(path).collect(Collectors.toList());
             while (filesList.size() > 0) {
@@ -325,6 +332,7 @@ public class VCSFilesystemDataController implements VCSDataController {
             }
         }
         Files.deleteIfExists(path);
+        System.err.println(path + " exists: " + Files.exists(path));
     }
 
     static private void saveSomething(Object o, String where) throws IOException {

@@ -5,6 +5,7 @@ import ru.spbau.svidchenko.hw02.vcs.data.RepositoryInfo;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.VCSException;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Remove file/directory from repository and from VCS
@@ -15,6 +16,7 @@ public class RemoveTask implements VCSTask {
     private AddTask addTask;
 
     public RemoveTask(String path, VCSDataController dataController) {
+        System.err.println("Removing: " + path);
         this.path = path;
         this.dataController = dataController;
         addTask = new AddTask(path, dataController);
