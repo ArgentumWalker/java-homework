@@ -19,6 +19,7 @@ public class Main {
         try {
             if (args.length == 0) {
                 System.out.println("What do ya want from me? \n I have nothing!");
+                return;
             }
             if (args[0].toLowerCase().equals("help")) {
                 System.out.println(
@@ -67,7 +68,7 @@ public class Main {
             if (args[0].toLowerCase().equals("status")) {
                 VCSDataController dataController = VCSFilesystemDataController.getInstance();
                 StatusResult statusResult = new SimpleVCSController(dataController).status();
-                System.out.println("Tracked changes:");
+                System.out.println("Added changes:");
                 System.out.println(">New files:");
                 for (String filePath : statusResult.getTrackedAddedFiles()) {
                     System.out.println("--->" + filePath);
@@ -80,7 +81,7 @@ public class Main {
                 for (String filePath : statusResult.getTrackedRemovedFiles()) {
                     System.out.println("--->" + filePath);
                 }
-                System.out.println("Untracked changes:");
+                System.out.println("Not added changes:");
                 System.out.println(">New files:");
                 for (String filePath : statusResult.getUntrackedAddedFiles()) {
                     System.out.println("--->" + filePath);

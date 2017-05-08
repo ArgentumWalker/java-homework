@@ -44,6 +44,5 @@ public class CheckoutTask implements VCSTask {
         }
         info.setCurrentCommitIndex(newCommit.getIndex());
         dataController.saveRepositoryInfo(info);
-        //TODO: restore files from backups
     }
 }

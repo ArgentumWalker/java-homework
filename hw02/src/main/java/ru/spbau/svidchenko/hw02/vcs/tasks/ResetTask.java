@@ -8,6 +8,8 @@ import ru.spbau.svidchenko.hw02.vcs.data.TrackedFileData;
 import ru.spbau.svidchenko.hw02.vcs.exceptions.VCSException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +28,14 @@ public class ResetTask implements VCSTask {
 
     @Override
     public void execute() throws IOException, VCSException {
-        List<String> paths = dataController.getChangedFiles(path);
         CommitData currentCommit = dataController.getCommitData(dataController.getRepositoryInfo().getCurrentCommitIndex());
+        ArrayList<String> trackedFiles = new ArrayList<>();
+        for (Integer i : currentCommit.getTrackedFiles()) {
+            trackedFiles.add(dataController.getTrackedFileData(i).getPath());
+        }
+        List<String> changedPaths = dataController.getChangedFiles(path);
+        List<String> removedPaths = (List<String>)trackedFiles.clone();
+        removedPaths.removeAll(dataController.getAllFiles(path));
         List<TrackedFileData> filesToReset = currentCommit.getTrackedFiles().stream()
                 .map((Integer i) -> {
                     try {
@@ -37,10 +45,25 @@ public class ResetTask implements VCSTask {
                         return null;
                     }
                 })
-                .filter((tfd) -> tfd.getPath().startsWith(path + dataController.sep()))
+                .filter((tfd) -> changedPaths.contains(tfd.getPath()))
                 .collect(Collectors.toList());
+        List<TrackedFileData> filesToRestore = currentCommit.getTrackedFiles().stream()
+                .map((Integer i) -> {
+                    try {
+                        return dataController.getTrackedFileData(i);
+                    } catch (Exception e) {
+                        logger.error("Can't get tracked file data (id : {})\nStacktrace: {}", i, e.getStackTrace());
+                        return null;
+                    }
+                })
+                .filter((tfd) -> removedPaths.contains(tfd.getPath()))
+                .collect(Collectors.toList());
+
         for (TrackedFileData data : filesToReset) {
             dataController.clearFile(data.getIndex());
+            dataController.restoreFile(data.getIndex());
+        }
+        for (TrackedFileData data : filesToRestore) {
             dataController.restoreFile(data.getIndex());
         }
     }

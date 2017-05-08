@@ -34,8 +34,7 @@ public class LogResult {
                 branchNames.put(branch.getIndex(), branch.getName());
             }
             result.add(new LogResultCommit(id, commit.getMessage(), branchNames.get(commit.getBranch())));
-
-            commit.getParents().retainAll(addedCommits);
+            commit.getParents().removeAll(addedCommits);
             commitDeque.addAll(commit.getParents());
             addedCommits.addAll(commit.getParents());
         }
