@@ -158,7 +158,17 @@ public class VCSFilesystemDataController implements VCSDataController {
 
     @Override
     public RepositoryInfo getRepositoryInfo() throws IOException {
-        return (RepositoryInfo)loadSomething(SEP + VCS_REPOSITORY_INFO);
+        RepositoryInfo info = (RepositoryInfo)loadSomething(SEP + VCS_REPOSITORY_INFO);
+        List<String> changes = (List<String>)info.getAddedFiles().clone();
+        changes.addAll(info.getRemovedFiles());
+        info.getAddedFiles().clear();
+        info.getRemovedFiles().clear();
+        info.getAddedFiles().addAll(changes);
+        info.getRemovedFiles().addAll(changes);
+        info.getRemovedFiles().removeAll(getAllFiles(""));
+        info.getAddedFiles().retainAll(getAllFiles(""));
+        saveRepositoryInfo(info);
+        return info;
     }
 
     @Override
