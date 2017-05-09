@@ -23,6 +23,10 @@ public class StatusResult {
 
     public StatusResult(VCSDataController dataController) throws IOException {
         RepositoryInfo info = dataController.getRepositoryInfo();
+        List<String> addedFiles = (List<String>)info.getAddedFiles().clone();
+        List<String> removedFiles = (List<String>)info.getAddedFiles().clone();
+        addedFiles.retainAll(dataController.getAllFiles(""));
+        removedFiles.removeAll(dataController.getAllFiles(""));
         CommitData currentCommit = dataController.getCommitData(info.getCurrentCommitIndex());
         List<String> trackedFiles = new ArrayList<>();
         List<String> notChangedFiles = new ArrayList<>();
@@ -34,12 +38,12 @@ public class StatusResult {
             }
         }
 
-        trackedAddedFiles.addAll(info.getAddedFiles());
+        trackedAddedFiles.addAll(addedFiles);
         trackedAddedFiles.removeAll(trackedFiles);
-        trackedChangedFiles.addAll(info.getAddedFiles());
+        trackedChangedFiles.addAll(addedFiles);
         trackedChangedFiles.removeAll(trackedAddedFiles);
         trackedChangedFiles.removeAll(notChangedFiles);
-        trackedRemovedFiles.addAll(info.getRemovedFiles());
+        trackedRemovedFiles.addAll(removedFiles);
         trackedRemovedFiles.removeAll(dataController.getAllFiles(""));
         untrackedAddedFiles.addAll(dataController.getAllFiles(""));
         untrackedAddedFiles.removeAll(trackedFiles);

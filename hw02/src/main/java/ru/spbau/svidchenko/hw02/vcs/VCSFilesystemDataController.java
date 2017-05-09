@@ -158,18 +158,7 @@ public class VCSFilesystemDataController implements VCSDataController {
 
     @Override
     public RepositoryInfo getRepositoryInfo() throws IOException {
-        RepositoryInfo info = (RepositoryInfo)loadSomething(SEP + VCS_REPOSITORY_INFO);
-        List<String> changes = (List<String>)info.getAddedFiles().clone();
-        List<String> allFiles = getAllFiles("");
-        changes.addAll(info.getRemovedFiles());
-        info.getAddedFiles().clear();
-        info.getRemovedFiles().clear();
-        info.getAddedFiles().addAll(changes);
-        info.getRemovedFiles().addAll(changes);
-        info.getRemovedFiles().removeAll(allFiles);
-        info.getAddedFiles().retainAll(allFiles);
-        saveRepositoryInfo(info);
-        return info;
+        return (RepositoryInfo)loadSomething(SEP + VCS_REPOSITORY_INFO);
     }
 
     @Override
@@ -217,7 +206,13 @@ public class VCSFilesystemDataController implements VCSDataController {
         } else {
             dirPath = repositoryPath + SEP + path;
         }
-        System.err.println("Getting everything from: " + dirPath);
+        dirPath = Paths.get(dirPath).toAbsolutePath().toString();
+        while (dirPath.contains("." + SEP)) {
+            dirPath = dirPath.replace("." + SEP, "");
+        }
+        if (dirPath.endsWith(".")) {
+            dirPath = dirPath.substring(0, dirPath.length()-2);
+        }
         if (Files.exists(Paths.get(dirPath))) {
             try {
                 return Files.walk(Paths.get(dirPath))
@@ -332,7 +327,6 @@ public class VCSFilesystemDataController implements VCSDataController {
             }
         }
         Files.deleteIfExists(path);
-        System.err.println(path + " exists: " + Files.exists(path));
     }
 
     static private void saveSomething(Object o, String where) throws IOException {

@@ -35,11 +35,6 @@ public class RepositoryInfo implements Serializable {
      */
     private ArrayList<String> addedFiles = new ArrayList<>();
 
-    /**
-     * Files removed by task Add or task Remove
-     */
-    private ArrayList<String> removedFiles = new ArrayList<>();
-
     public RepositoryInfo() {
 
     }
@@ -90,13 +85,5 @@ public class RepositoryInfo implements Serializable {
 
     public void setAddedFiles(ArrayList<String> addedFiles) {
         this.addedFiles = addedFiles;
-    }
-
-    public ArrayList<String> getRemovedFiles() {
-        return removedFiles;
-    }
-
-    public void setRemovedFiles(ArrayList<String> removedFiles) {
-        this.removedFiles = removedFiles;
     }
 }

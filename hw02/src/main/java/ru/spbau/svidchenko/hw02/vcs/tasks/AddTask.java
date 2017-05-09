@@ -34,17 +34,18 @@ public class AddTask implements VCSTask{
         newFiles.addAll(allFiles);
         newFiles.removeAll(trackedFiles);
         filePaths.addAll(newFiles);
-
-
         List<String> removedFiles = trackedFiles.stream()
                 .filter((s) -> s.startsWith(path))
                 .collect(Collectors.toList());
         removedFiles.removeAll(allFiles);
-
+        filePaths.addAll(removedFiles);
+        filePaths.removeAll(info.getAddedFiles());
         info.getAddedFiles().addAll(filePaths);
+
+        /*info.getAddedFiles().addAll(filePaths);
         info.getRemovedFiles().addAll(removedFiles);
         info.getAddedFiles().removeAll(removedFiles);
-        info.getRemovedFiles().removeAll(filePaths);
+        info.getRemovedFiles().removeAll(filePaths);*/
         dataController.saveRepositoryInfo(info);
     }
 }

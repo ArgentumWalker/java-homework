@@ -34,6 +34,10 @@ public class CommitTask implements VCSTask {
         RepositoryInfo info = dataController.getRepositoryInfo();
         CommitData currentCommit = dataController.getCommitData(info.getCurrentCommitIndex());
         BranchData currentBranch = dataController.getBranchData(currentCommit.getBranch());
+        List<String> addedFiles = (List<String>)info.getAddedFiles().clone();
+        List<String> removedFiles = (List<String>)info.getAddedFiles().clone();
+        addedFiles.retainAll(dataController.getAllFiles(""));
+        removedFiles.removeAll(dataController.getAllFiles(""));
         ArrayList<Integer> fileIndexes = (ArrayList<Integer>)currentCommit.getTrackedFiles().clone();
         ArrayList<String> pathes = new ArrayList<>();
 
@@ -42,9 +46,9 @@ public class CommitTask implements VCSTask {
             pathes.add(dataController.getTrackedFileData(id).getPath());
         }
 
-        pathes.removeAll(info.getRemovedFiles());
+        pathes.removeAll(removedFiles);
 
-        for (String path : info.getAddedFiles()) {
+        for (String path : addedFiles) {
             byte[] hash = dataController.calculateHash(path);
             if (fileIdByFilePath.containsKey(path) &&
                     Arrays.equals(dataController.getTrackedFileData(fileIdByFilePath.get(path)).getHash(),hash)) {
@@ -86,7 +90,6 @@ public class CommitTask implements VCSTask {
         currentBranch.getCommitIndexes().add(commitData.getIndex());
         currentBranch.setLastCommit(commitData.getIndex());
         info.getAddedFiles().clear();
-        info.getRemovedFiles().clear();
 
         dataController.saveRepositoryInfo(info);
         dataController.saveCommitData(commitData);

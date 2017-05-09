@@ -45,15 +45,13 @@ public class RemoveTaskTest {
     public void remove_RemoveOneFile_Success() throws IOException, VCSException {
         controller.remove(file1.getName());
         RepositoryInfo info = dataController.getRepositoryInfo();
-        assertEquals(1, info.getRemovedFiles().size());
-        assertEquals(0, info.getAddedFiles().size());
+        assertEquals(1, info.getAddedFiles().size());
     }
 
     @Test
     public void remove_RemoveDirectoryWithFile_Success() throws IOException, VCSException {
         controller.remove(folder1.getName());
         RepositoryInfo info = dataController.getRepositoryInfo();
-        assertEquals(1, info.getRemovedFiles().size());
-        assertEquals(0, info.getAddedFiles().size());
+        assertEquals(1, info.getAddedFiles().size());
     }
 }
