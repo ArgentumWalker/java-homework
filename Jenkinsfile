@@ -3,13 +3,13 @@ pipeline {
 	stages {
 		stage('Test') {
 			steps {
-				sh 'hw*/gradlew check'
+				sh 'hw06/gradlew check'
 			}
 		}
 	}
 	post {
 		always {
-			junit 'hw*/build/reports/**/*.xml'
+			junit 'hw06/build/reports/**/*.xml'
 		}
 	}
 }
