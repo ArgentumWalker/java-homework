@@ -1,0 +1,12 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+env:
+  - PROJECT_DIR=hw06
+
+script: 
+  - cd $PROJECT_DIR
+  - gradle build
+  
