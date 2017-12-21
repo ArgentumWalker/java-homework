@@ -3,7 +3,7 @@ pipeline {
 	stages {
 		stage('Test') {
 			steps {
-				cmd 'call hw06/gradlew check'
+				sh 'hw06/gradlew check'
 			}
 		}
 	}
