@@ -3,7 +3,7 @@ pipeline {
 	stages {
 		stage('Test') {
 			steps {
-				sh 'hw06/gradlew build'
+				sh 'gradle build -p hw06'
 			}
 		}
 	}
