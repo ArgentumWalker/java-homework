@@ -9,7 +9,7 @@ pipeline {
 	}
 	post {
 		always {
-			sh 'ls -r hw06/build/classes/test'
+			sh 'ls -r hw06/build/classes'
 			junit 'build/test-results/test/*.html'
 		}
 	}
