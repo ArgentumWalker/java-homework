@@ -7,9 +7,4 @@ pipeline {
 			}
 		}
 	}
-	post {
-		always {
-			junit 'hw06/build/reports/**/*.xml'
-		}
-	}
 }
